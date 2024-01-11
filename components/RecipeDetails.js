@@ -155,6 +155,12 @@ display: flex;
       color: #111;
     }
   }
+
+  @media screen and (max-width: 768px) {
+    font-size: 6px;
+    justify-content: space-between;
+    flex-direction: row;
+  }
 `;
 
 const ModalButtons = styled.a`
