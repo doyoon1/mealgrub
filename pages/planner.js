@@ -28,23 +28,22 @@ const MessageContainer = styled.div`
   margin-top: 20px;
 `;
 
+const DesktopContainer = styled.div`
+  @media screen and (max-width: 960px) {
+    display: none;
+  }
+`;
+
+const MobileContainer = styled.div`
+  @media screen and (min-width: 961px) {
+    display: none;
+  }
+`;
+
 export default function PlannerPage() {
   const { bagRecipes } = useContext(BagContext);
   const [recipes, setRecipes] = useState([]);
-  const { data:session } = useSession();
-  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setScreenWidth(window.innerWidth);
-    };
-
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
+  const { data: session } = useSession();
 
   useEffect(() => {
     if (bagRecipes.length === 0) {
@@ -67,7 +66,6 @@ export default function PlannerPage() {
   const [, drop] = useDrop({
     accept: 'RECIPE',
     drop: (item, monitor) => {
-      // Handle the drop event, e.g., update the planner state
       const { recipe } = item;
       console.log(`Dropped recipe ${recipe.title} into planner!`);
     },
@@ -77,30 +75,29 @@ export default function PlannerPage() {
     <>
       <Header />
       <Center>
-        {screenWidth >= 960 ? (
-          <>
-            <Title>My Planner</Title>
-            {recipes.length > 0 ? (
-              <div>
-                <RecipeContainer ref={drop}>
-                  {bagRecipes.map(recipeId => {
-                    const recipe = recipes.find(r => r._id === recipeId);
-                    return recipe ? (
-                      <DraggableRecipe key={recipe._id} recipe={recipe} session={session} />
-                    ) : null;
-                  })}
-                </RecipeContainer>
-                <WeekCalendar />
-              </div>
-            ) : (
-              <div>Your bag is empty.</div>
-            )}
-          </>
-        ) : (
+        <DesktopContainer>
+          <Title>My Planner</Title>
+          {recipes.length > 0 ? (
+            <div>
+              <RecipeContainer ref={drop}>
+                {bagRecipes.map(recipeId => {
+                  const recipe = recipes.find(r => r._id === recipeId);
+                  return recipe ? (
+                    <DraggableRecipe key={recipe._id} recipe={recipe} session={session} />
+                  ) : null;
+                })}
+              </RecipeContainer>
+              <WeekCalendar />
+            </div>
+          ) : (
+            <div>Your bag is empty.</div>
+          )}
+        </DesktopContainer>
+        <MobileContainer>
           <MessageContainer>
             Planner is only available for desktop.
           </MessageContainer>
-        )}
+        </MobileContainer>
       </Center>
     </>
   );
