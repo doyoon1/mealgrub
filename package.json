@@ -1,0 +1,42 @@
+{
+  "name": "next-meal-planner-front",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "antd": "^5.11.1",
+    "axios": "^1.6.2",
+    "bcrypt": "^5.1.1",
+    "copy-to-clipboard": "^3.3.3",
+    "date-fns": "^3.1.0",
+    "fraction.js": "^4.3.7",
+    "jspdf": "^2.5.1",
+    "mongodb": "^6.1.0",
+    "mongoose": "^7.6.6",
+    "next": "latest",
+    "next-auth": "^4.24.5",
+    "react": "^18.2.0",
+    "react-dnd": "^16.0.1",
+    "react-dnd-html5-backend": "^16.0.1",
+    "react-dom": "^18.2.0",
+    "react-dropdown-select": "^4.10.0",
+    "react-hot-toast": "^2.4.1",
+    "react-scroll": "^1.9.0",
+    "react-select": "^5.8.0",
+    "react-slick": "^0.29.0",
+    "react-star-ratings": "^2.3.0",
+    "react-youtube": "^10.1.0",
+    "slick-carousel": "^1.8.1",
+    "styled-components": "^6.1.1",
+    "swr": "^2.2.4"
+  },
+  "devDependencies": {
+    "eslint": "latest",
+    "eslint-config-next": "latest"
+  }
+}
