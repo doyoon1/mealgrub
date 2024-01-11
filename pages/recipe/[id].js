@@ -37,6 +37,10 @@ const Title = styled.h1`
     font-weight: bold;
     margin: 18px 0;
     font-family: 'League Spartan', sans-serif;
+    @media screen and (max-width: 768px) {
+        font-size: 2em;
+        margin: 12px 0;
+    }
 `;
 
 const Description = styled.p`
@@ -45,16 +49,17 @@ const Description = styled.p`
     text-align: justify;
     margin: 12px 0;
     font-family: 'League Spartan', sans-serif;
-`;
-
-const ButtonWrapper = styled.div`
-    display: flex;
-    gap: 4px;
+    @media screen and (max-width: 768px) {
+        font-size: 0.8em;
+    }
 `;
 
 const Message = styled.p`
     color: #ff3333;
     font-size: 12px;
+    @media screen and (max-width: 768px) {
+        font-size: 8px;
+    }
 `;
 
 const CategoryWrapper = styled.div`
@@ -77,22 +82,27 @@ const VideoContainer = styled.div`
     gap: 20px;
     text-align: center;
     margin-top: 20px;
+
     &:before {
         content: '';
         display: block;
-        height: 80px; // Adjust the height as needed
-        margin-top: -80px; // Make sure to adjust this to match the height
+        height: 80px;
+        margin-top: -80px;
         visibility: hidden;
+    }
+
+    @media screen and (max-width: 768px) {
+        iframe {
+            height: 200px !important;
+        }
     }
 `;
 
-const RatingContainer = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    p {
-        font-size: 16px;
-        font-weight: bold;
+const FeedbackContainer = styled.div`
+    margin-bottom: 100px;
+    @media screen and (max-width: 768px) {
+        margin-top: -70px;
+        margin-bottom: 50px;
     }
 `;
 
@@ -101,6 +111,7 @@ const Feedback = styled.div`
     background-color: #F7F7F7;
     padding: 4px 12px 12px 12px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 65%;
     border-radius: 8px;
     h2 {
         font-size: 24px;
@@ -123,6 +134,22 @@ const Feedback = styled.div`
         font-size: 16px;
         cursor: pointer;
     }
+
+    @media screen and (max-width: 768px) {
+        width: 94%;
+        h2 {
+            font-size: 18px;
+        }
+        p {
+            margin-top: 4px;
+            font-size: 12px;
+        }
+        button {
+            font-size: 12px;
+            padding: 8px 12px;
+        }
+    
+    }
 `;
 
 const CommentBox = styled.div`
@@ -136,6 +163,13 @@ const CommentBox = styled.div`
         font-size: 16px;
         margin-bottom: 0;
     }
+    @media screen and (max-width: 768px) {
+        h2 {
+            font-family: 'League Spartan', sans-serif;
+            font-size: 16px;
+            margin: 30px 0 0 0;
+        }
+    }
 `;
 
 const Comment = styled.div`
@@ -146,6 +180,12 @@ const Comment = styled.div`
         font-size: 18px;
         margin-bottom: 10px;
     }
+    @media screen and (max-width: 768px) {
+        span {
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+    }
 `;
 
 const FullName = styled.h4`
@@ -153,12 +193,19 @@ const FullName = styled.h4`
   font-weight: 500;
   margin-bottom: 0;
   font-family: 'League Spartan', sans-serif;
+  @media screen and (max-width: 768px) {
+    font-size: 16px;
+  }
 `;
 
 const PostedDate = styled.h1`
   font-weight: 500;
   margin-bottom: 6px;
   font-size: 12px;
+  @media screen and (max-width: 768px) {
+    font-size: 10px;
+    margin-bottom: 2px;
+  }
 `;
 
 const CommentContainer = styled.div`
@@ -176,6 +223,20 @@ const CommentContainer = styled.div`
         border-radius: 4px;
         padding: 12px;
     }
+    @media screen and (max-width: 768px) {
+        p {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 0;
+        }
+        textarea {
+            height: 180px;
+            resize: none;
+            border: 1px solid #777;
+            border-radius: 4px;
+            padding: 4px;
+        }    
+    }
 `;
 
 const Label = styled.h2`
@@ -183,6 +244,9 @@ const Label = styled.h2`
     font-weight: normal;
     margin: 0;
     font-family: 'League Spartan', sans-serif;
+    @media screen and (max-width: 768px) {
+        font-size: 1.6rem;
+    }
 `;
 
 
@@ -201,14 +265,25 @@ const Info = styled.div`
     span{
         font-weight: 500;
     }
+    @media screen and (max-width: 768px) {
+        margin-bottom: 10px;
+        p{
+            font-size: 10px;
+        }
+        span{
+            font-size: 10px;
+        }
+    }
 
 `;
 
 const TextLabel = styled.h2`
-    font-size: 1.4rem;
+    font-size: 1rem;
     font-weight: bold;
     margin: 0;
     text-align: center;
+    @media screen and (max-width: 768px) {
+    }
 `;
 
 const List = styled.ul`
@@ -231,6 +306,9 @@ const ListItem = styled.li`
 
 const Name = styled.span`
     font-size: 14px;
+    @media screen and (max-width: 768px) {
+        font-size: 10px;
+    }
 `;
 
 const ProcedureContainer = styled.div`
@@ -242,6 +320,11 @@ const ProcedureStep = styled.div`
     margin: 0 10px;
     display: flex;
     gap: 10px;
+    @media screen and (max-width: 768px) {
+        flex-direction: column;
+        gap: 0;
+        margin: 0px;
+    }
 `;
 
 const Step = styled.p`
@@ -249,7 +332,9 @@ const Step = styled.p`
     flex: 1;
     font-style: italic;
     font-family: 'League Spartan', sans-serif;
-
+    @media screen and (max-width: 768px) {
+        margin-bottom: 4px;
+    }
 `;
 
 const Steps = styled.p`
@@ -257,6 +342,9 @@ const Steps = styled.p`
     text-align: justify;
     flex: 8;
     font-family: 'League Spartan', sans-serif;
+    @media screen and (max-width: 768px) {
+        margin: 0px;
+    }
 `;
 
 
@@ -303,12 +391,24 @@ const ServingsButton = styled.button`
     &:hover {
         background-color: #111;
     }
+
+    @media screen and (max-width: 768px) {\
+        height: 12px;
+        width: 12px;
+        svg {
+            width: 8px;
+            height: 8px;
+        }
+    }
 `;
 
 const ServingsLabel = styled.p`
     font-size: 14px;
     margin: 0px 16px 0px 0px;
     color: #333;
+    @media screen and (max-width: 768px) {
+        font-size: 10px;
+    }
 `;
 
 const SetContainer = styled.div`
@@ -320,6 +420,9 @@ const SetLabel = styled.p`
     font-size: 14px;
     margin: 0px;
     color: #333;
+    @media screen and (max-width: 768px) {
+        font-size: 10px;
+    }
 `;
 
 const CopyButton = styled.button`
@@ -355,12 +458,15 @@ const CopyButtonWrapper = styled.div`
 const ColumnWrapper = styled.div`
   display: flex;
   margin: 20px 0;
+  @media screen and (max-width: 768px) {
+    flex-direction: column;
+    margin: 0;
+  }
 `;
 
 const LeftColumn = styled.div`
   flex: 2;
   padding: 16px 16px 0 0 ;
-  position: relative;
 `;
 
 const RightColumn = styled.div`
@@ -383,10 +489,15 @@ const RecipeImage = styled.div`
 
   img {
     height: 100%;
-    width: auto; /* To maintain the aspect ratio */
-    max-width: 100%; /* Ensure the image doesn't exceed the container width */
+    width: auto;
+    max-width: 100%;
+  }
+
+  @media screen and (max-width: 768px) {
+    height: 200px;
   }
 `;
+
 
 
 const NavigationButton = styled.button`
@@ -419,6 +530,16 @@ const PreviousButton = styled(NavigationButton)`
     background-color: #111;
     left: 18px;
   }
+
+  @media screen and (max-width: 768px) {
+    left: 10px;
+    height: 30px;
+    width: 30px;
+    svg {
+        height: 18px;
+        width: 18px;
+    }
+  }
 `;
 
 const NextButton = styled(NavigationButton)`
@@ -440,6 +561,16 @@ const NextButton = styled(NavigationButton)`
     background-color: #111;
     right: 18px;
   }
+
+  @media screen and (max-width: 768px) {
+    right: 10px;
+    height: 30px;
+    width: 30px;
+    svg {
+        height: 18px;
+        width: 18px;
+    }
+  }
 `;
 
 const RatingsWrapper = styled.div`
@@ -447,12 +578,21 @@ const RatingsWrapper = styled.div`
   flex-direction: row;
   align-items: center;
   margin-top: 10px;
+  @media screen and (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 4px;
+  }
 `;
 
 const AverageRating = styled.p`
   font-size: 16px;
   margin: 0 0 0px 8px;
   font-family: 'League Spartan', sans-serif;
+  @media screen and (max-width: 768px) {
+    margin: 0;
+    font-size: 14px;
+  }
 `;
 
 const Buttons = styled.div`
@@ -478,6 +618,9 @@ const Buttons = styled.div`
     svg {
         height: 18px;
         width: 18px;
+    }
+    @media screen and (max-width: 768px) {
+        margin: 10px 0;
     }
 }
 `;
@@ -822,31 +965,6 @@ export default function RecipePage({ recipe }) {
                                     {procedureSteps}
                                 </ProcedureContainer>
                             </div>
-                            <Feedback>
-                                <h2>Leave A Comment</h2>
-                                <p>Submit your question or comment below.</p>
-                                <CommentContainer>
-                                    <p>Comment*</p>
-                                    <textarea
-                                    value={newCommentText}
-                                    onChange={e => setNewCommentText(e.target.value)}
-                                    placeholder="Add your comment..."
-                                    />
-                                </CommentContainer>
-                                <button onClick={handleAddComment}>Submit Comment</button>
-                            </Feedback>
-                            <CommentBox>
-                                <h2>Comments</h2>
-                                {comments
-                                    .filter(comment => comment.approved)
-                                    .map((comment) => (
-                                        <Comment key={comment._id}>
-                                            <FullName>{comment.user.firstName} {comment.user.lastName}</FullName>
-                                            <PostedDate>Posted on {format(new Date(comment.createdAt), 'MMMM dd, yyyy')}</PostedDate>
-                                            <span>{comment.text}</span>
-                                        </Comment>
-                                    ))}
-                            </CommentBox>
                         </LeftColumn>
                         <RightColumn>
                             <IngredientsContainer>
@@ -891,6 +1009,33 @@ export default function RecipePage({ recipe }) {
                         </NutritionalValuesContainer>
                         </RightColumn>
                     </ColumnWrapper>
+                    <FeedbackContainer>
+                        <Feedback>
+                        <h2>Leave A Comment</h2>
+                        <p>Submit your question or comment below.</p>
+                        <CommentContainer>
+                            <p>Comment*</p>
+                            <textarea
+                                value={newCommentText}
+                                onChange={e => setNewCommentText(e.target.value)}
+                                placeholder="Add your comment..."
+                            />
+                        </CommentContainer>
+                            <button onClick={handleAddComment}>Submit Comment</button>
+                        </Feedback>
+                        <CommentBox>
+                            <h2>Comments</h2>
+                            {comments
+                                .filter(comment => comment.approved)
+                                .map((comment) => (
+                                    <Comment key={comment._id}>
+                                        <FullName>{comment.user.firstName} {comment.user.lastName}</FullName>
+                                        <PostedDate>Posted on {format(new Date(comment.createdAt), 'MMMM dd, yyyy')}</PostedDate>
+                                        <span>{comment.text}</span>
+                                    </Comment>
+                                ))}
+                        </CommentBox>
+                    </FeedbackContainer>
                 </div>
                 <ScrollToTopButton />
             </Center>

@@ -28,6 +28,16 @@ const PlannerModalContent = styled.div`
   h4 {
     font-family: "Poppins", sans-serif;
   }
+
+  @media screen and (max-width: 768px) {
+    padding: 10px20px;
+    width: 220px;
+
+    h4 {
+      font-size: 12px;
+      margin-bottom: 0;
+    }
+  }
 `;
 
 const CloseButton = styled.span`
@@ -53,6 +63,11 @@ const AddToPlannerButton = styled.button`
   font-family: "Poppins", sans-serif;
   transition: all .4s;
 
+  @media screen and (max-width: 768px) {
+    font-size: 12px;
+    margin-top: 12px;
+  }
+
   &:hover {
     border-radius: 24px;
   }
@@ -65,22 +80,33 @@ const SelectDay = styled.select`
   border: 1px solid #ccc;
   border-radius: 5px;
   font-family: "Poppins", sans-serif;
+  @media screen and (max-width: 768px) {
+    padding: 4px;
+    margin: 4px 0;
+  }
 `;
 
 const CheckboxContainer = styled.div`
   display: flex;
   flex-direction: column;
   margin-top: 10px;
+  @media screen and (max-width: 768px) {
+    gap: 0;
+  }
 `;
 
 const CheckboxLabel = styled.label`
   display: flex;
   align-items: center;
   margin-bottom: 8px;
+  @media screen and (max-width: 768px) {
+    font-size: 12px;
+    margin-bottom: 2px;
+  }
 `;
 
 const CheckboxInput = styled.input`
-  margin-right: 8px;
+  margin-right: 4px;
 `;
 
 const PlannerModal = ({ recipe, isOpen, closeModal, session }) => {

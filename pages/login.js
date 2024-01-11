@@ -11,12 +11,17 @@ import NavBar from '@/components/Navbar';
 import toast from 'react-hot-toast';
 
 const StyledComponent = styled.div`
-  background-image: url('/loginbg.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  position: relative;
+  background-color: #F0F2F5;
   padding: 60px 0;
+  overflow: hidden;
+
+  @media screen and (max-width: 768px) {
+    padding: 40px 0;
+    margin-bottom: 170px;
+  }
 `;
+
 
 const Logo = styled.span`
   text-align: center;
@@ -25,6 +30,10 @@ const Logo = styled.span`
   margin-top: 35px;
   color: #568203;
   font-weight: 500;
+
+  @media screen and (max-width: 768px) {
+    font-size: 20px;
+  }
 `;
 
 const Title = styled.p`
@@ -32,6 +41,9 @@ const Title = styled.p`
   font-size: 14px;
   margin: 0;
   margin-bottom: 10px;
+  @media screen and (max-width: 768px) {
+    font-size: 8px
+  }
 `;
 
 const Signin = styled(Link)`
@@ -41,27 +53,40 @@ const Signin = styled(Link)`
 
 const FormContainer = styled.form`
   display: flex;
-  padding: 10px 40px 80px 40px;
-  width: 340px;
+  padding: 10px 20px 80px 20px;
+  width: 100%;
   flex-direction: column;
   background-color: #fff;
   align-items: center;
   justify-content: center;
   border-radius: 4px;
+  margin-top: 20px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
   margin: auto;
   margin-top: 50px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+
+  @media screen and (max-width: 768px) {
+    padding: 10px 10px;
+    padding-bottom: 30px;
+    width: 250px;
+  }
 `;
 
 const Inputs = styled.input`
-  padding: 2px 10px;
+  padding: 8px 10px;
   border: 1px solid #9E9E9E;
-  width: 218px;
-  height: 30px;
+  width: 220px;
   margin: 10px 0 4px 0;
   font-family: 'Poppins', sans-serif;
   user-select: none;
-  transition: border-color 0.3s ease-in-out;
+  transition: border-color 0.3s;
+
+  @media screen and (max-width: 768px) {
+    width: 160px;
+    margin: 4px 0 4px 0;
+    font-size: 8px;
+  }
 
   &:focus {
     border-color: #222 !important; 
@@ -76,15 +101,21 @@ const Inputs = styled.input`
 
 const SubmitButton = styled.button`
   margin: 8px 0;
-  padding: 2px;
+  padding: 10px;
   width: 240px;
-  height: 50px;
   border: 1px solid #9E9E9E;
   background-color: #fff;
   font-size: 14px;
   font-family: 'Poppins', sans-serif;
   cursor: pointer;
   transition: box-shadow 0.3s;
+
+  @media screen and (max-width: 768px) {
+    width: 182px;
+    margin: 4px 0 4px 0;
+    font-size: 8px;
+    height: 10px
+  }
 
   &:hover {
     box-shadow: 0px 0px 10px 0px #009688;
@@ -93,46 +124,6 @@ const SubmitButton = styled.button`
   &:disabled {
     cursor: not-allowed;
   }
-`;
-
-const FacebookButton = styled.button`
-  display: flex;
-  align-items: center;
-  margin: 8px 0;
-  padding: 2px;
-  width: 240px;
-  height: 50px;
-  border: 1px solid #1A76F0;
-  background-color: #fff;
-  font-size: 14px;
-  font-family: 'Poppins', sans-serif;
-  cursor: pointer;
-  transition: box-shadow 0.3s;
-  gap: 8px;
-  justify-content: center;
-  
-  &:hover {
-    box-shadow: 0px 0px 10px 0px #009688;
-  }
-`;
-
-const OrText = styled.div`
-  font-weight: bold;
-  color: #222;
-`;
-
-const SuccessMessage = styled.div`
-  text-align: center;
-  font-size: 12px;
-  margin: 0;
-  color: #008000;
-`;
-
-const ErrorMessage = styled.div`
-  text-align: center;
-  font-size: 12px;
-  margin: 0;
-  color: #FF0000;
 `;
 
 export default function LoginPage() {

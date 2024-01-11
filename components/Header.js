@@ -168,8 +168,6 @@ export default function Header() {
     const session = useSession();
     const status = session.status;
 
-
-
     useEffect(() => {
     const fetchDietaryCategories = async () => {
         try {

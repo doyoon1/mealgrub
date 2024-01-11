@@ -15,13 +15,21 @@ const ModalOverlay = styled.div`
 `;
 
 const ModalContent = styled.div`
-    position: relative;
-    width: 600px; /* Set your desired width */
-    height: 400px; /* Set your desired height */
-    background-color: white;
-    overflow: hidden;
-    border-radius: 8px;
+  position: relative;
+  width: 600px;
+  height: 400px;
+  overflow: hidden;
+  border-radius: 8px;
+
+  @media screen and (max-width: 768px) {
+    text-align: center;
+    display: flex;
+    max-width: 80%;
+    max-height: 80vh;
+    height: auto;
+  }
 `;
+
 
 const ModalImage = styled.img`
     width: 100%;
@@ -53,12 +61,22 @@ const PreviousButton = styled(NavigationButton)`
     transition: background-color 0.1s ease;
     transition: left 0.3s ease;
     svg {
-        height: 24px;
-        width: 24px;
+      height: 24px;
+      width: 24px;
     }
     &:hover {
-        background-color: #111;
-        left: 18px;
+      background-color: #111;
+      left: 18px;
+    }
+
+    @media screen and (max-width: 768px) {
+      left: 10px;
+      height: 30px;
+      width: 30px;
+      svg {
+        height: 16px;
+        width: 16px;
+      }
     }
 `;
 
@@ -73,14 +91,24 @@ const NextButton = styled(NavigationButton)`
     justify-content: center;
     align-items: center;
     transition: background-color 0.1s ease;
-    transition: right 0.1s ease;
+    transition: left 0.3s ease;
     svg {
-        height: 24px;
-        width: 24px;
+      height: 24px;
+      width: 24px;
     }
     &:hover {
-        background-color: #111;
-        right: 18px;
+      background-color: #111;
+      right: 18px;
+    }
+
+    @media screen and (max-width: 768px) {
+      right: 10px;
+      height: 30px;
+      width: 30px;
+      svg {
+        height: 16px;
+        width: 16px;
+      }
     }
 `;
 

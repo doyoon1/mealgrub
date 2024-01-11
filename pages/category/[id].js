@@ -27,7 +27,11 @@ const IconButtons = styled.div`
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  transition: top 0.5s, right 0.5s; 
+  transition: top 0.5s, right 0.5s;
+  @media screen and (max-width: 768px) {
+    top: ${(props) => (props.isSideWindowOpen ? "300px" : "500px")};
+    right: ${(props) => (props.isSideWindowOpen ? "405px" : "15px")};
+  }
 `;
 
 const Icon = styled.svg`
@@ -42,12 +46,18 @@ const CategoryTitle = styled.h1`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  @media screen and (max-width: 768px) {
+    font-size: 1.8rem;
+  }
 `;
 
 const RecipeCount = styled.p`
   font-size: 1.2rem;
   margin: 0;
-  color: #777; /* You can choose the color you prefer */
+  color: #777;
+  @media screen and (max-width: 768px) {
+    font-size: 1rem;
+  }
 `;
 
 const StyledPagination = styled(Pagination)`

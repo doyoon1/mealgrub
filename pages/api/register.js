@@ -3,6 +3,41 @@ import mongoose from 'mongoose';
 import { mongooseConnect } from '@/lib/mongoose';
 import { UserAccounts } from '@/models/User';
 
+async function validateInputFields({ email, password, firstName, lastName, confirmPassword }) {
+  const requiredFields = ['email', 'password', 'firstName', 'lastName', 'confirmPassword'];
+
+  for (const field of requiredFields) {
+    if (!eval(field)) {
+      return 'All fields are required';
+    }
+  }
+
+  if (password.length < 5) {
+    return 'Password must be at least 5 characters';
+  }
+
+  if (password !== confirmPassword) {
+    return 'Passwords do not match';
+  }
+
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&_])[A-Za-z\d@$!%*?&_]+$/;
+  if (!passwordRegex.test(password)) {
+    return 'Password must be 5 characters with at least one uppercase, one lowercase, one number, and one special character.';
+  }
+
+  const nameRegex = /^[a-zA-Z]+$/;
+  if (!nameRegex.test(firstName) || !nameRegex.test(lastName)) {
+    return 'Name should not contain numbers or special characters';
+  }
+
+  return null; // No validation error
+}
+
+async function isEmailAlreadyRegistered(email) {
+  const existingUser = await UserAccounts.findOne({ email });
+  return existingUser !== null;
+}
+
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     try {
@@ -11,40 +46,25 @@ export default async function handler(req, res) {
       const { email, password, firstName, lastName, confirmPassword } = req.body;
 
       // Validate input fields
-      if (!email || !password || !firstName || !lastName || !confirmPassword) {
-        return res.status(400).json({ error: 'All fields are required' });
-      }
+      const validationError = await validateInputFields({
+        email,
+        password,
+        firstName,
+        lastName,
+        confirmPassword,
+      });
 
-      if (password.length < 5) {
-        return res.status(400).json({ error: 'Password must be at least 5 characters' });
-      }
-
-      if (password !== confirmPassword) {
-        return res.status(400).json({ error: 'Passwords do not match' });
-      }
-
-      if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/.test(password)) {
-        return res.status(400).json({
-          error:
-            'Password must be 5 characters with at least one uppercase, one lowercase, one number, and one special character.',
-        });
-      }
-
-      if (!/^[a-zA-Z]+$/.test(firstName) || !/^[a-zA-Z]+$/.test(lastName)) {
-        return res.status(400).json({ error: 'Name should not contain numbers or special characters' });
+      if (validationError) {
+        return res.status(400).json({ error: validationError });
       }
 
       // Check if the email already exists
-      const existingUser = await UserAccounts.findOne({ email });
-
-      if (existingUser) {
-        // Email is already registered
+      if (await isEmailAlreadyRegistered(email)) {
         return res.status(400).json({ error: 'Email is already registered' });
       }
 
-      // Hash the password
-      const salt = bcrypt.genSaltSync(10);
-      const hashedPassword = bcrypt.hashSync(password, salt);
+      // Hash the password asynchronously
+      const hashedPassword = await bcrypt.hash(password, 10);
 
       // Create user
       const createdUser = await UserAccounts.create({

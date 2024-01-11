@@ -10,7 +10,7 @@ import NavBar from '@/components/Navbar';
 import toast from 'react-hot-toast';
 
 const StyledComponent = styled.div`
-  background-image: url('/background.png');
+  background-color: #F0F2F5;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -24,6 +24,10 @@ const Logo = styled.span`
   margin-top: 35px;
   color: #568203;
   font-weight: 500;
+  @media screen and (max-width: 768px) {
+    font-size: 20px;
+  }
+
 `;
 
 const Title = styled.p`
@@ -31,6 +35,9 @@ const Title = styled.p`
   font-size: 14px;
   margin: 0;
   margin-bottom: 10px;
+  @media screen and (max-width: 768px) {
+    font-size: 8px;
+  }
 `;
 
 const Signin = styled(Link)`
@@ -50,6 +57,11 @@ const FormContainer = styled.form`
   margin: auto;
   margin-top: 50px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  @media screen and (max-width: 768px) {
+    padding: 10px 10px;
+    padding-bottom: 30px;
+    width: 250px;
+  }
 `;
 
 const NameContainer = styled.div`
@@ -67,6 +79,12 @@ const Inputs = styled.input`
   font-family: 'Poppins', sans-serif;
   user-select: none;
   transition: border-color 0.3s ease-in-out;
+
+  @media screen and (max-width: 768px) {
+    width: 190px;
+    margin: 4px 0 4px 0;
+    font-size: 8px;
+  }
 
   &:focus {
     border-color: #222 !important; 
@@ -88,6 +106,12 @@ const NameInputs = styled.input`
   font-family: 'Poppins', sans-serif;
   user-select: none;
   transition: border-color 0.3s ease-in-out;
+
+  @media screen and (max-width: 768px) {
+    width: 80px;
+    margin: 4px 0 4px 0;
+    font-size: 8px;
+  }
 
   &:focus {
     border-color: #222 !important; 
@@ -111,6 +135,12 @@ const SubmitButton = styled.button`
   font-family: 'Poppins', sans-serif;
   cursor: pointer;
   transition: box-shadow 0.3s;
+
+  @media screen and (max-width: 768px) {
+    width: 212px;
+    margin: 4px 0 4px 0;
+    font-size: 8px;
+  }
 
   &:hover {
     box-shadow: 0px 0px 10px 0px #009688;

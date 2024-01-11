@@ -28,7 +28,11 @@ const IconButtons = styled.div`
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  transition: top 0.5s, right 0.5s; 
+  transition: top 0.5s, right 0.5s;
+  @media screen and (max-width: 768px) {
+    top: ${(props) => (props.isSideWindowOpen ? "300px" : "500px")};
+    right: ${(props) => (props.isSideWindowOpen ? "405px" : "15px")};
+  }
 `;
 
 const Icon = styled.svg`
