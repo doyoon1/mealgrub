@@ -282,7 +282,6 @@ const RecipesPage = ({ recipes, query, totalPages, currentPage, totalRecipes }) 
               )}
             </IconButtons>
       )}
-
     </>
   );
 };

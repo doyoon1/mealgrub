@@ -140,6 +140,7 @@ const SubmitButton = styled.button`
     width: 212px;
     margin: 4px 0 4px 0;
     font-size: 8px;
+    height: 35px;
   }
 
   &:hover {

@@ -114,7 +114,7 @@ const SubmitButton = styled.button`
     width: 182px;
     margin: 4px 0 4px 0;
     font-size: 8px;
-    height: 10px
+    height: 35px
   }
 
   &:hover {
