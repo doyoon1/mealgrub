@@ -24,7 +24,7 @@ const SearchInput = styled.input`
   font-size: 1.2rem;
   border: 1px solid #ccc;
   border-top-left-radius: 32px;
-  border-bottom-left-radius: ${(props) => (props.isFocused ? '0' : '32px')}; // Apply border-radius based on focus
+  border-bottom-left-radius: ${(props) => (props.isFocused && props.hasRecentSearches ? '0' : '32px')};
   outline: none;
   font-family: "Poppins", sans-serif;
   z-index: 999;
@@ -44,7 +44,7 @@ const SearchButton = styled.button`
   border: 1px solid #222;
 
   border-top-right-radius: 32px;
-  border-bottom-right-radius: ${(props) => (props.isFocused ? '0' : '32px')};
+  border-bottom-right-radius: ${(props) => (props.isFocused && props.hasRecentSearches ? '0' : '32px')};
   cursor: pointer;
   outline: none;
   z-index: 999;
@@ -152,6 +152,7 @@ export default function RecipeSearch({ initialValue }) {
             onMouseDown={() => setIsInputFocused(true)}
             onKeyDown={handleKeyDown}
             isFocused={isInputFocused}
+            hasRecentSearches={recentSearches.length > 0}
           />
           <SearchButton onClick={performSearch} isFocused={isInputFocused}>
             <SearchIcon

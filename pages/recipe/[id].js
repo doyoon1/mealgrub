@@ -829,71 +829,98 @@ export default function RecipePage({ recipe }) {
         setActiveImageIndex((prevIndex) => (prevIndex + 1) % recipe.images.length);
     };
 
+    const procedureStepsText = recipe.procedure.map((step, index) => (
+        `Step ${index + 1}: ${step}`
+    ));
+
     const generatePDF = () => {
         const doc = new jsPDF();
         const today = new Date();
-      
+    
         // Set the font style to Poppins
         doc.setFont('Poppins-Medium', 'normal');
-      
+    
         // Set the title of the PDF (not centered, but bold)
         doc.setFontSize(18);
-      
+    
         // Create a link to the recipe page
         const recipeLink = `${window.location.origin}/recipe/${recipe._id}`;
         const originLink = window.location.origin;
         doc.setTextColor(86, 130, 3);
         doc.textWithLink("MealGrub", 10, 10, { url: originLink });
-      
+    
         // Reset font size
         doc.setFontSize(16);
-      
+    
         doc.setFont('Inter-Regular', 'normal');
         doc.setTextColor(17, 17, 17);
         doc.setFontSize(10);
         doc.text("Title:", 10, 20);
         doc.text("Servings:", 10, 25);
         doc.setFont('Inter-Bold', 'normal');
-      
+    
         // Set the title as a hyperlink
         doc.textWithLink(recipe.title, 19, 20, { url: recipeLink });
-      
+    
         doc.text(`${servings}`, 26, 25);
-      
+    
         // Add Date label
         doc.setFont('Inter-Regular', 'normal');
         doc.text("Date:", 161, 20);
-      
+    
         doc.setFont('Inter-Bold', 'normal');
         // Add the current date
         doc.text(today.toDateString(), 171, 20);
-      
+    
         doc.setFontSize(10);
         doc.setTextColor(64, 64, 64); // RGB values for dark gray
-      
+    
         // Set the font family for the ingredients
         doc.setFont('RobotoSlab-Medium', 'bold');
-      
+    
         // Add a title before the separator line
         doc.text("Ingredients:", 10, 35); // Adjusted y-coordinate here
-      
+    
         // Add a separator line
         const separatorY = 38; // Adjusted y-coordinate here
         doc.line(10, separatorY, 200, separatorY);
-      
+    
         // Initialize the vertical position for ingredients
         let yPos = 44;
-      
+    
         // Loop through and add each ingredient to the PDF
         updatedIngredients.forEach((ingredient) => {
-          doc.text(`${ingredient.quantity} ${ingredient.measurement} - ${ingredient.name}`, 10, yPos);
-          yPos += 5;
+            doc.text(`${ingredient.quantity} ${ingredient.measurement} - ${ingredient.name}`, 10, yPos);
+            yPos += 5;
         });
-      
+    
+        // Add a title before the separator line for procedures
+        yPos += 10;
+        doc.text("Procedures:", 10, yPos);
+    
+        // Add a separator line for procedures
+        yPos += 3;
+        doc.line(10, yPos, 200, yPos);
+    
+        // Initialize the vertical position for procedures
+        yPos += 10;
+
+        // Loop through and add each procedure step to the PDF
+        procedureStepsText.forEach((step, index) => {
+            // Split the step into lines, each with a maximum width of 200
+            const lines = doc.splitTextToSize(step, 200);
+
+            // Add each line to the PDF
+            lines.forEach((line, lineIndex) => {
+                doc.text(line, 10, yPos);
+                yPos += 6; // Adjust the vertical spacing as needed
+            });
+        });
+
         // Save the PDF with a unique name (e.g., recipe name + timestamp)
         const pdfFileName = `MealGrub-${recipe.title}_Ingredients_${new Date().getTime()}.pdf`;
         doc.save(pdfFileName);
-    };      
+    };    
       
     const increaseSets = () => {
         setSets(sets + 1);
@@ -982,7 +1009,7 @@ export default function RecipePage({ recipe }) {
                                             Video
                                         </button>
                                     </ScrollLink>
-                                    <button onClick={generatePDF}>
+                                    <button onClick={() => generatePDF(procedureStepsText)}>
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                                             <path fillRule="evenodd" d="M7.875 1.5C6.839 1.5 6 2.34 6 3.375v2.99c-.426.053-.851.11-1.274.174-1.454.218-2.476 1.483-2.476 2.917v6.294a3 3 0 0 0 3 3h.27l-.155 1.705A1.875 1.875 0 0 0 7.232 22.5h9.536a1.875 1.875 0 0 0 1.867-2.045l-.155-1.705h.27a3 3 0 0 0 3-3V9.456c0-1.434-1.022-2.7-2.476-2.917A48.716 48.716 0 0 0 18 6.366V3.375c0-1.036-.84-1.875-1.875-1.875h-8.25ZM16.5 6.205v-2.83A.375.375 0 0 0 16.125 3h-8.25a.375.375 0 0 0-.375.375v2.83a49.353 49.353 0 0 1 9 0Zm-.217 8.265c.178.018.317.16.333.337l.526 5.784a.375.375 0 0 1-.374.409H7.232a.375.375 0 0 1-.374-.409l.526-5.784a.373.373 0 0 1 .333-.337 41.741 41.741 0 0 1 8.566 0Zm.967-3.97a.75.75 0 0 1 .75-.75h.008a.75.75 0 0 1 .75.75v.008a.75.75 0 0 1-.75.75H18a.75.75 0 0 1-.75-.75V10.5ZM15 9.75a.75.75 0 0 0-.75.75v.008c0 .414.336.75.75.75h.008a.75.75 0 0 0 .75-.75V10.5a.75.75 0 0 0-.75-.75H15Z" clipRule="evenodd" />
                                         </svg>
