@@ -4,6 +4,8 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { SessionProvider } from "next-auth/react";
 import toast, { Toaster } from "react-hot-toast";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './App.css'
 
 export default function App({ Component, pageProps }) {
@@ -18,6 +20,7 @@ export default function App({ Component, pageProps }) {
           </BagContextProvider>
         </DndProvider>
         <Toaster />
+        <ToastContainer />
       </SessionProvider>
     </>
   );

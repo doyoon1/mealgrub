@@ -27,7 +27,7 @@ export function BagContextProvider({ children }) {
       console.error('User not logged in.');
       // Display a toast error message here
       toast.error('Please log in to save recipes.', {
-        position: 'bottom-left', // Set the position to bottom-left
+        position: 'top-center',
       });
       return;
     }
@@ -43,7 +43,7 @@ export function BagContextProvider({ children }) {
             setBagRecipes(response.data.bag);
             // Display a toast success message here
             toast.success('Saved successfully!', {
-              position: 'bottom-left', // Set the position to bottom-left
+              position: 'top-center',
             });
           })
           .catch(error => {
@@ -55,7 +55,7 @@ export function BagContextProvider({ children }) {
         console.error('Error managing recipe in bag:', error);
         // Display a toast error message here if saving fails
         toast.error('Failed to save recipe.', {
-          position: 'bottom-left', // Set the position to bottom-left
+          position: 'top-center',
         });
       });
   }
@@ -69,7 +69,7 @@ export function BagContextProvider({ children }) {
       console.error('User not logged in.');
       // Display a toast error message here
       toast.error('Please log in to save recipes.', {
-        position: 'bottom-left', // Set the position to bottom-left
+        position: 'top-center',
       });
       return;
     }
@@ -85,7 +85,7 @@ export function BagContextProvider({ children }) {
             setBagRecipes(response.data.bag);
             // Display a toast success message here
             toast.success('Recipe removed successfully!', {
-              position: 'bottom-left', // Set the position to bottom-left
+              position: 'top-center',
             });
           })
           .catch(error => {
@@ -97,7 +97,7 @@ export function BagContextProvider({ children }) {
         console.error('Error removing recipe from bag:', error);
         // Display a toast error message here if removal fails
         toast.error('Failed to remove recipe.', {
-          position: 'bottom-left', // Set the position to bottom-left
+          position: 'top-center',
         });
       });
   }

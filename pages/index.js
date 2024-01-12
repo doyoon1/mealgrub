@@ -50,6 +50,7 @@ const Hero = styled.div`
 `;
 
 const HeroLogo = styled.h1`
+  user-select: none;
   font-size: 150px;
   color: #fff;
   font-weight: bold;
@@ -68,7 +69,7 @@ const HeroLabel1 = styled.p`
   font-size: 32px;
   margin: 0;
   margin-top: -20px;
-  font-family: 'Libre Baskerville', serif;
+  user-select: none;
 
   @media screen and (max-width: 768px) {
     font-size: 14px;
@@ -82,8 +83,8 @@ const HeroLabel2 = styled.p`
   color: #111;
   font-size: 16px;
   margin-top: 20px;
-  font-family: 'Libre Baskerville', serif;
   font-weight: 600;
+  user-select: none;
 
   @media screen and (max-width: 768px) {
     font-size: 6px;

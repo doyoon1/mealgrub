@@ -38,26 +38,28 @@ const SearchInput = styled.input`
 const SearchButton = styled.button`
   background-color: #222;
   color: #fff;
-  padding: 8px 20px;
+  padding: 15px 20px;
   font-size: 1.2rem;
   border: none;
   border: 1px solid #222;
-
   border-top-right-radius: 32px;
   border-bottom-right-radius: ${(props) => (props.isFocused && props.hasRecentSearches ? '0' : '32px')};
   cursor: pointer;
   outline: none;
   z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   @media screen and (max-width: 768px) {
-    padding: 6px 10px;
+    padding: 13px 10px;
     font-size: 1rem;
   }
 `;
 
 const SearchIcon = styled.svg`
-  width: 24px;
-  height: 24px;
+  width: 18px;
+  height: 18px;
 `;
 
 const RecentSearchDropdown = styled.div`
@@ -154,7 +156,7 @@ export default function RecipeSearch({ initialValue }) {
             isFocused={isInputFocused}
             hasRecentSearches={recentSearches.length > 0}
           />
-          <SearchButton onClick={performSearch} isFocused={isInputFocused}>
+          <SearchButton onClick={performSearch} isFocused={isInputFocused} hasRecentSearches={recentSearches.length > 0}>
             <SearchIcon
               xmlns="http://www.w3.org/2000/svg"
               fill="none"

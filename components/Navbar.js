@@ -19,6 +19,7 @@ const Wrapper = styled.div`
 `;
 
 const LogoWrapper = styled.div`
+  user-select: none;
   color: #fff;
   text-decoration: none;
   position: relative;
@@ -53,7 +54,7 @@ const LinksWrapper = styled.div`
   justify-content: center;
   gap: 30px;
   align-items: center;
-  gap: 8px;
+  gap: 20px;
   position: fixed;
   top: 50px;
   bottom: 0;
@@ -119,7 +120,7 @@ export default function NavBar() {
             <LinksWrapper mobileNavActive={mobileNavActive}>
               <NavLink href={"/"} isActive={router.pathname === "/"}>Home</NavLink>
               <NavLink href={"/"} isActive={router.pathname === "/"}>About Us</NavLink>
-              <NavLink href={"/"} isActive={router.pathname === "/"}>Request Recipes</NavLink>
+              <NavLink href={"/"} isActive={router.pathname === "/"}>Contact Us</NavLink>
               <NavLink href={"/login"} isActive={router.pathname === "/login"}>Login</NavLink>
               <NavLink href={"/register"} isActive={router.pathname === "/register"}>Register</NavLink>
             </LinksWrapper>

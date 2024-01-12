@@ -222,14 +222,9 @@ export default function Featured({ recipes }) {
   const settings = {
     dots: false,
     infinite: false,
-    speed: 1200,
+    speed: 1000,
     slidesToShow: 1,
     slidesToScroll: 1,
-    appendDots: (dots) => (
-      <DotsWrapper>
-        <ul style={{ margin: "0", padding: "0" }}>{dots}</ul>
-      </DotsWrapper>
-    ),
   };
 
   return (

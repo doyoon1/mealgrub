@@ -8,12 +8,14 @@ import CloseIcon from "./icons/CloseIcon";
 import axios from "axios";
 import CoursesDropdown from "./Dropdown";
 import { signOut, useSession } from "next-auth/react";
+import Swal from 'sweetalert2';
 
 const StyledHeader = styled.header`
     background-color: #111;
 `;
 
-const Logo = styled(Link)`
+const Logo = styled.div`
+    user-select: none;
     color: #fff;
     text-decoration: none;
     position: relative;
@@ -227,12 +229,31 @@ export default function Header() {
       mainCourses();
   }, []);
 
+  const handleLogout = async () => {
+    // Display SweetAlert confirmation
+    const result = await Swal.fire({
+      title: 'Logout Confirmation',
+      text: 'Are you sure you want to log out?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, log out!',
+    });
+  
+    // If the user confirms, log out
+    if (result.isConfirmed) {
+      await signOut({ redirect: false });
+      router.push("/login");
+    }
+  };
+
     return (
       <div>
         <StyledHeader>
           <Center>
             <Wrapper>
-              <Logo href={"/"}>
+              <Logo>
                 MealGrub
               </Logo>
               <StyledNav mobileNavActive={mobileNavActive}>
@@ -260,12 +281,7 @@ export default function Header() {
                   {status === 'authenticated' && (
                     <>
                       <NavName>Hello, {session.data.user.firstName}!</NavName>
-                      <Logout
-                        onClick={async () => {
-                          await signOut({ redirect: false });
-                          router.push("/login");
-                        }}
-                      >
+                      <Logout onClick={handleLogout}>
                         Logout
                       </Logout>
                     </>
