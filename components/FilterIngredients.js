@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Select from 'react-select';
 import styled from 'styled-components';
-
-const FilterWindowContainer = styled.div`
-  margin-top: 10px;
-`;
+import Center from './Center';
 
 const Label = styled.p`
   font-size: 16px;
@@ -24,36 +21,19 @@ const SearchButton = styled.button`
   cursor: pointer;
 `;
 
-
 export default function FilterWindow({ ingredients, selectedIngredients, onIngredientChange, onSearch }) {
-  const [options, setOptions] = useState([]);
+  // Remove the state declaration for ingredients
+  const [options, setOptions] = useState(ingredients);
+
 
   useEffect(() => {
+    // Fetch ingredients from API only if not already provided as a prop
     if (!ingredients || ingredients.length === 0) {
       const fetchIngredients = async () => {
         try {
           const response = await fetch('/api/ingredients');
           const data = await response.json();
-
-          // Use a Set to filter out duplicate ingredients, ignoring case
-          const uniqueIngredientsSet = new Set();
-          const uniqueIngredientsMap = new Map();
-
-          data.ingredients.forEach((ingredient) => {
-            const trimmedLowercaseIngredient = ingredient.trim().toLowerCase();
-
-            if (!uniqueIngredientsSet.has(trimmedLowercaseIngredient)) {
-              uniqueIngredientsSet.add(trimmedLowercaseIngredient);
-              uniqueIngredientsMap.set(trimmedLowercaseIngredient, ingredient);
-            }
-          });
-
-          // Convert the unique ingredients back to their original cases
-          const sortedUniqueIngredients = Array.from(uniqueIngredientsSet)
-            .sort((a, b) => a.localeCompare(b))
-            .map((trimmedLowercaseIngredient) => ({ value: trimmedLowercaseIngredient, label: uniqueIngredientsMap.get(trimmedLowercaseIngredient) }));
-
-          setOptions(sortedUniqueIngredients);
+          setOptions(data.ingredients.map((ingredient) => ({ value: ingredient, label: ingredient })));
         } catch (error) {
           console.error('Error fetching ingredients:', error);
         }
@@ -65,17 +45,15 @@ export default function FilterWindow({ ingredients, selectedIngredients, onIngre
 
   return (
     <>
-      <FilterWindowContainer>
-        <h1>Filter Window</h1>
-        <Label>Ingredients</Label>
-        <Select
-          isMulti
-          options={options}
-          value={selectedIngredients}
-          onChange={onIngredientChange}
-        />
-        <SearchButton onClick={onSearch}>Search</SearchButton>
-      </FilterWindowContainer>
+      <h1>Filter Window</h1>
+      <Label>Ingredients</Label>
+      <Select
+        isMulti
+        options={options}
+        value={selectedIngredients}
+        onChange={onIngredientChange}
+      />
+      <SearchButton onClick={onSearch}>Search</SearchButton>
     </>
   );
 }

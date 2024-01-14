@@ -5,10 +5,11 @@ import Footer from '@/components/Footer';
 import styled from 'styled-components';
 import Image from 'next/image';
 import Link from 'next/link';
-import { signIn } from 'next-auth/react';
+import { signIn, getSession } from 'next-auth/react';
 import { useState } from 'react';
 import NavBar from '@/components/Navbar';
 import toast from 'react-hot-toast';
+import { useEffect } from 'react';
 
 const StyledComponent = styled.div`
   position: relative;
@@ -167,28 +168,38 @@ export default function LoginPage() {
     setShowPassword(!showPassword);
   };
 
-  async function handleFormSubmit(ev) {
+  const handleFormSubmit = async (ev) => {
     ev.preventDefault();
     setLoginInProgress(true);
-
+  
     // Validation check: Ensure email and password are not empty
     if (!email || !password) {
       toast.error('All fields are required', { position: 'top-center' });
       setLoginInProgress(false);
       return;
     }
-
+  
     const currentHost = window.location.origin;
-
+  
     const result = await signIn('credentials', { email, password, callbackUrl: `${currentHost}/home`, redirect: false });
-
+  
     if (result.error) {
       // Display an error toast
       toast.error('Email or password is incorrect', { position: 'top-center' });
+      setLoginInProgress(false);
+      return;
     }
-
+  
+    // Fetch the session after a successful login
+    const session = await getSession();
+    if (session) {
+      // User is logged in, you can redirect or perform other actions
+      console.log('User is logged in:', session.user);
+    }
+  
     setLoginInProgress(false);
-  }
+  };
+  
 
   return (
     <>

@@ -47,6 +47,9 @@ const DropdownItem = styled.a`
   text-decoration: none;
   display: block;
   padding: 10px;
+  @media screen and (max-width: 768px) {
+    width: 314px;
+  }
 
   &:hover {
     background-color: #333;

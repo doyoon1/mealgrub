@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import Button from "./Button";
 import Link from "next/link";
 import { useContext, useState } from "react";
 import { BagContext } from "./BagContext";

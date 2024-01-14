@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import Center from "./Center";
-import Button from "./Button";
 import { useContext, useState, useRef, useEffect } from "react";
 import { BagContext } from "./BagContext";
 import Slider from "react-slick";

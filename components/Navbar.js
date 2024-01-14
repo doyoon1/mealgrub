@@ -67,6 +67,7 @@ const LinksWrapper = styled.div`
     display: flex;
     position: static;
     padding: 0;
+  }
 `;
 
 const NavButton = styled.button`

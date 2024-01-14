@@ -739,31 +739,26 @@ export default function RecipePage({ recipe }) {
               setComments([...comments, data.comment]);
               setNewCommentText('');
       
-              // Display a success toast with bottom-left position
               toast.success("Thank you for submitting your comment. Wait for admin's approval.", {
                 position: 'bottom-left',
               });
       
             } else {
               console.error('Failed to add comment:', response.statusText);
-              // You may handle the error and display an error toast here
             }
           } catch (error) {
             console.error('Error adding comment:', error);
-            // You may handle the error and display an error toast here
           }
         }
     };
     
     useEffect(() => {
-      // Fetch the average and total ratings when the component mounts
       axios
         .get(`/api/getRecipeRatings?recipeId=${recipe._id}`)
         .then((response) => {
           const { average, total } = response.data;
           setAverageRating(average);
           setTotalRatings(total);
-          // Update userRating to the averageRating
           setUserRating(average);
         })
         .catch((error) => {
@@ -1115,7 +1110,7 @@ export default function RecipePage({ recipe }) {
                                     .filter(comment => comment.approved)
                                     .map((comment) => (
                                         <Comment key={comment._id}>
-                                            <FullName>{comment.user.firstName} {comment.user.lastName}</FullName>
+                                            <FullName>{comment?.user?.firstName || comment?.user?.lastName ? `${comment.user.firstName} ${comment.user.lastName}` : 'Deleted User'}</FullName>
                                             <PostedDate>Posted on {format(new Date(comment.createdAt), 'MMMM dd, yyyy')}</PostedDate>
                                             <span>{comment.text}</span>
                                         </Comment>
