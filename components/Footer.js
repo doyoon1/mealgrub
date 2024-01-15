@@ -8,6 +8,10 @@ const Container = styled.div`
     margin: 0;
     padding: 24px 0;
     color: #9E9E9E;
+    @media screen and (max-width: 768px) {
+      padding: 18px 0;
+      font-size: 8px;
+    }
 `;
 
 export default function Footer() {

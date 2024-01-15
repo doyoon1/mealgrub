@@ -38,7 +38,6 @@ const NavLink = styled(Link)`
   display: block;
   color: #aaa;
   text-decoration: none;
-  ${(props) => props.isActive && `color: #fff;`}
   &:hover {
     color: #fff;
     transition: all .4s;
@@ -103,9 +102,7 @@ export default function NavBar() {
   const [mobileNavActive, setMobileNavActive] = useState(false);
 
   useEffect(() => {
-    // Check if there is an active session and if the user clicked the "Login" link
     if (session && router.pathname === '/login') {
-      // Redirect to "/home" if there is a session and the user clicked the "Login" link
       router.push('/home');
     }
   }, [session, router]);
@@ -119,11 +116,11 @@ export default function NavBar() {
               MealGrub
             </LogoWrapper>
             <LinksWrapper mobileNavActive={mobileNavActive}>
-              <NavLink href={"/"} isActive={router.pathname === "/"}>Home</NavLink>
-              <NavLink href={"/"} isActive={router.pathname === "/"}>About Us</NavLink>
-              <NavLink href={"/"} isActive={router.pathname === "/"}>Contact Us</NavLink>
-              <NavLink href={"/login"} isActive={router.pathname === "/login"}>Login</NavLink>
-              <NavLink href={"/register"} isActive={router.pathname === "/register"}>Register</NavLink>
+              <NavLink href={"/"}>Home</NavLink>
+              <NavLink href="/#about-section">About Us</NavLink>
+              <NavLink href={"/"}>Contact Us</NavLink>
+              <NavLink href={"/login"}>Login</NavLink>
+              <NavLink href={"/register"}>Register</NavLink>
             </LinksWrapper>
             <NavButton onClick={() => setMobileNavActive((prev) => !prev)}>
               {mobileNavActive ? <CloseIcon /> : <HamburgerIcon />}
