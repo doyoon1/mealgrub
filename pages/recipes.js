@@ -11,7 +11,7 @@ import ScrollToTopButton from "@/components/ScrollToTop";
 import { Pagination } from 'antd/dist/antd';
 import { useRouter } from 'next/router';
 import { BagContext } from "@/components/BagContext";
-import FilterWindow from "@/components/FilterIngredients";
+import FilterWindow from "@/components/FilterWindow";
 import { useSession } from "next-auth/react";
 
 const ContentContainer = styled.div`
@@ -238,7 +238,6 @@ const RecipesPage = ({ recipes, query, totalPages, currentPage, totalRecipes }) 
             size="medium"
             showSizeChanger={false}
             itemRender={(current, type, element) => {
-              // Display only up to 3 pagination numbers
               if (type === 'page') {
                 if (current === currentPage || Math.abs(current - currentPage) <= 1 || current === 1 || current === totalPages) {
                   return (
@@ -247,7 +246,6 @@ const RecipesPage = ({ recipes, query, totalPages, currentPage, totalRecipes }) 
                     </span>
                   );
                 } else if (Math.abs(current - currentPage) === 2) {
-                  // Display ellipsis (...) for skipped pages
                   return <span>...</span>;
                 }
               }
@@ -298,33 +296,24 @@ export async function getServerSideProps({ query }) {
   let recipes;
   let totalRecipes;
 
-  if (searchQuery || ingredients) {
-    const searchFilters = {
-      $or: [
-        { title: { $regex: searchQuery, $options: 'i' } },
-      ],
-    };
+  const searchFilters = {
+    $or: [
+      { title: { $regex: searchQuery, $options: 'i' } },
+    ],
+  };
 
-    // Add ingredient filter if ingredients are provided
-    if (ingredients) {
-      const ingredientList = ingredients.split(',').map(ingredient => ingredient.trim());
-      searchFilters['ingredients.name'] = { $in: ingredientList };
-    }
-
-    recipes = await Recipe.find(searchFilters)
-      .skip(skip)
-      .limit(recipesPerPage)
-      .exec();
-
-    totalRecipes = await Recipe.countDocuments(searchFilters);
-  } else {
-    recipes = await Recipe.find({}, null, { sort: { _id: -1 } })
-      .skip(skip)
-      .limit(recipesPerPage)
-      .exec();
-
-    totalRecipes = await Recipe.countDocuments();
+  // Add ingredient filter if ingredients are provided
+  if (ingredients) {
+    const ingredientList = ingredients.split(',').map(ingredient => ingredient.trim());
+    searchFilters['ingredients.name'] = { $all: ingredientList }; // Change from $in to $all
   }
+
+  recipes = await Recipe.find(searchFilters)
+    .skip(skip)
+    .limit(recipesPerPage)
+    .exec();
+
+  totalRecipes = await Recipe.countDocuments(searchFilters);
 
   const totalPages = Math.ceil(totalRecipes / recipesPerPage);
 
@@ -338,5 +327,6 @@ export async function getServerSideProps({ query }) {
     },
   };
 }
+
 
 export default RecipesPage;

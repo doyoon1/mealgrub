@@ -306,6 +306,10 @@ const Info = styled.div`
         font-weight: bold;
         font-style: italic;
     }
+    a{
+        font-size: 14px;
+        margin: 0;
+    }
     span{
         font-weight: 500;
     }
@@ -1012,7 +1016,9 @@ export default function RecipePage({ recipe }) {
                                     </button>
                                 </Buttons>
                                 <Info>
-                                    <p>By: <span>{recipe.citation}</span></p>
+                                    <p>Cooking time: <span>{recipe?.cookingTime}</span></p>
+                                    <p>By: <span>{recipe?.citation}</span></p>
+                                    <a href={recipe?.citationLink} target="_blank">{recipe?.citationLink}</a>
                                     <p>Posted: <span>{formattedCreatedAt}</span></p>
                                     {recipe.createdAt !== recipe.updatedAt && (
                                         <p>Updated: <span>{formattedUpdatedAt}</span></p>

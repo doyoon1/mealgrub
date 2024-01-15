@@ -102,30 +102,24 @@ export default function RecipeSearch({ initialValue }) {
     }
   }, []);
 
-  // Handle real-time search
   const handleSearch = (e) => {
     const newSearchQuery = e.target.value;
     setSearchQuery(newSearchQuery);
   };
 
   const performSearch = () => {
-    // Check if the search query is not empty
     if (searchQuery.trim() === "") {
-      // Optionally, you can handle this case differently, e.g., show a message to the user
       return;
     }
 
-    // Check if the search query is already in recent searches
     if (!recentSearches.includes(searchQuery)) {
       const updatedRecentSearches = [searchQuery, ...recentSearches].slice(0, 5);
       setRecentSearches(updatedRecentSearches);
       localStorage.setItem("recentSearches", JSON.stringify(updatedRecentSearches));
     }
 
-    // Construct the new URL based on the search query
     const newUrl = `/recipes?query=${searchQuery}`;
 
-    // Update the router with the new URL
     router.push(newUrl);
   };
 
