@@ -178,21 +178,15 @@ export default function CategoryPage({ category, recipes }) {
             size="medium"
             showSizeChanger={false}
             itemRender={(current, type, element) => {
-              // Display only up to 3 pagination numbers
               if (type === 'page') {
-                if (current === currentPage || Math.abs(current - currentPage) <= 1 || current === 1 || current === totalPages) {
-                  return (
-                    <span className={currentPage === current ? 'custom-hover' : ''}>
-                      {current}
-                    </span>
-                  );
-                } else if (Math.abs(current - currentPage) === 2) {
-                  // Display ellipsis (...) for skipped pages
-                  return <span>...</span>;
-                }
+                return (
+                  <span className={currentPage === current ? 'custom-hover' : ''}>
+                    {current}
+                  </span>
+                );
               }
               return element;
-            }}
+            }}            
           />
         </div>
         <SideWindow isOpen={isSideWindowOpen} onClose={toggleSideWindow} />

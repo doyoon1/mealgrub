@@ -179,6 +179,14 @@ export default function Featured({ recipes }) {
     addRecipe(recipeId);
   }
 
+  const truncateDescription = (description, wordsLimit) => {
+    const words = description.split(" ");
+    if (words.length > wordsLimit) {
+      return words.slice(0, wordsLimit).join(" ") + " ...";
+    }
+    return description;
+  };
+
   const openModal = (images) => {
     setModalImages(images);
     setModalIsOpen(true);
@@ -237,7 +245,7 @@ export default function Featured({ recipes }) {
                     <Column>
                       <div>
                         <Title>{recipe.title}</Title>
-                        <Description>{recipe.description}</Description>
+                        <Description>{truncateDescription(recipe.description, 50)}</Description>
                         <ButtonsWrapper>
                           <button id="learn" onClick={() => goToRecipeDetails(recipe._id)}>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">

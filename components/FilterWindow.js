@@ -21,9 +21,9 @@ const SearchButton = styled.button`
   cursor: pointer;
 `;
 
-export default function FilterWindow({ ingredients, selectedIngredients, onIngredientChange, onSearch }) {
-  const [options, setOptions] = useState(ingredients);
-
+const FilterWindow = ({ ingredients, categories, selectedIngredients, selectedCategories, onIngredientChange, onCategoryChange, onSearch }) => {
+  const [ingredientOptions, setIngredientOptions] = useState(ingredients);
+  const [categoryOptions, setCategoryOptions] = useState(categories);
 
   useEffect(() => {
     if (!ingredients || ingredients.length === 0) {
@@ -31,7 +31,7 @@ export default function FilterWindow({ ingredients, selectedIngredients, onIngre
         try {
           const response = await fetch('/api/ingredients');
           const data = await response.json();
-          setOptions(data.ingredients.map((ingredient) => ({ value: ingredient, label: ingredient })));
+          setIngredientOptions(data.ingredients.map((ingredient) => ({ value: ingredient, label: ingredient })));
         } catch (error) {
           console.error('Error fetching ingredients:', error);
         }
@@ -39,19 +39,43 @@ export default function FilterWindow({ ingredients, selectedIngredients, onIngre
 
       fetchIngredients();
     }
-  }, [ingredients]);
+
+    if (!categories || categories.length === 0) {
+      const fetchCategories = async () => {
+        try {
+          const response = await fetch('/api/categories');
+          const data = await response.json();
+          setCategoryOptions(data.map((category) => ({ value: category.name, label: category.name })));
+        } catch (error) {
+          console.error('Error fetching categories:', error);
+        }
+      };
+
+      fetchCategories();
+    }
+  }, [ingredients, categories]);
 
   return (
     <>
       <h1>Filter Window</h1>
+      
       <Label>Ingredients</Label>
       <Select
         isMulti
-        options={options}
+        options={ingredientOptions}
         value={selectedIngredients}
         onChange={onIngredientChange}
+      />
+      <Label>Categories</Label>
+      <Select
+        isMulti
+        options={categoryOptions}
+        value={selectedCategories}
+        onChange={onCategoryChange}
       />
       <SearchButton onClick={onSearch}>Search</SearchButton>
     </>
   );
-}
+};
+
+export default FilterWindow;

@@ -140,7 +140,7 @@ export default function RecipeSearch({ initialValue }) {
         <SearchContainer>
           <SearchInput
             type="text"
-            placeholder="Search for recipes or ingredient..."
+            placeholder="Search for recipes..."
             value={searchQuery}
             onChange={handleSearch}
             onFocus={() => setIsInputFocused(true)}

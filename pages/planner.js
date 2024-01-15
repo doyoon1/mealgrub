@@ -47,7 +47,6 @@ export default function PlannerPage() {
 
   useEffect(() => {
     if (bagRecipes.length === 0) {
-      // No need to fetch recipes if the bag is empty
       return;
     }
 
@@ -59,7 +58,7 @@ export default function PlannerPage() {
       })
       .catch(error => {
         console.error('Error fetching recipes:', error);
-        setRecipes([]); // Handle the error by setting recipes to an empty array
+        setRecipes([]);
       });
   }, [bagRecipes]);
 
@@ -77,21 +76,19 @@ export default function PlannerPage() {
       <Center>
         <DesktopContainer>
           <Title>My Planner</Title>
-          {recipes.length > 0 ? (
-            <div>
-              <RecipeContainer ref={drop}>
-                {bagRecipes.map(recipeId => {
-                  const recipe = recipes.find(r => r._id === recipeId);
-                  return recipe ? (
-                    <DraggableRecipe key={recipe._id} recipe={recipe} session={session} />
-                  ) : null;
-                })}
-              </RecipeContainer>
-              <WeekCalendar />
-            </div>
-          ) : (
-            <div>Your bag is empty.</div>
-          )}
+          {recipes.length > 0 && (
+          <div>
+            <RecipeContainer ref={drop}>
+              {bagRecipes?.map(recipeId => {
+                const recipe = recipes.find(r => r._id === recipeId);
+                return recipe ? (
+                  <DraggableRecipe key={recipe._id} recipe={recipe} session={session} />
+                ) : null;
+              })}
+            </RecipeContainer>
+          </div>
+        )}
+        <WeekCalendar />
         </DesktopContainer>
         <MobileContainer>
           <MessageContainer>

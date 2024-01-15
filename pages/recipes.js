@@ -239,15 +239,11 @@ const RecipesPage = ({ recipes, query, totalPages, currentPage, totalRecipes }) 
             showSizeChanger={false}
             itemRender={(current, type, element) => {
               if (type === 'page') {
-                if (current === currentPage || Math.abs(current - currentPage) <= 1 || current === 1 || current === totalPages) {
-                  return (
-                    <span className={currentPage === current ? 'custom-hover' : ''}>
-                      {current}
-                    </span>
-                  );
-                } else if (Math.abs(current - currentPage) === 2) {
-                  return <span>...</span>;
-                }
+                return (
+                  <span className={currentPage === current ? 'custom-hover' : ''}>
+                    {current}
+                  </span>
+                );
               }
               return element;
             }}
@@ -305,7 +301,7 @@ export async function getServerSideProps({ query }) {
   // Add ingredient filter if ingredients are provided
   if (ingredients) {
     const ingredientList = ingredients.split(',').map(ingredient => ingredient.trim());
-    searchFilters['ingredients.name'] = { $all: ingredientList }; // Change from $in to $all
+    searchFilters['ingredients.name'] = { $all: ingredientList };
   }
 
   recipes = await Recipe.find(searchFilters)
