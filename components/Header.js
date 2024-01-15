@@ -43,6 +43,7 @@ const StyledNav = styled.nav`
     ` : `
         display: none;
     `}
+    background-color: #111;
     align-items: center;
     gap: 8px;
     position: fixed;

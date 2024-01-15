@@ -9,6 +9,10 @@ import CloseIcon from './icons/CloseIcon';
 
 const StyledNav = styled.div`
   background-color: #111;
+  position: fixed;
+  z-index: 1000;
+  width: 100%;
+  top: 0;
 `;
 
 const Wrapper = styled.div`

@@ -8,6 +8,7 @@ import Footer from '@/components/Footer';
 import { useSession } from 'next-auth/react';
 
 const Hero = styled.div`
+  margin-top: 65px;
   background-image: url("/pagebackground.png");
   background-size: cover;
   background-repeat: no-repeat;
