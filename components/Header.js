@@ -195,7 +195,6 @@ export default function Header() {
             const response = await axios.get("/api/categories");
             const coursesCategoryId = "653e5850ec031412f6316f77";
             
-            // Filter categories with "coursesCategoryId" as their parent
             const filteredCategories = response.data.filter((category) => {
             return category.parent === coursesCategoryId;
             });
@@ -215,7 +214,6 @@ export default function Header() {
           const response = await axios.get("/api/categories");
           const mainCoursesCategoryId = "6581153849e5aa1bbc820d9b";
           
-          // Filter categories with "coursesCategoryId" as their parent
           const filteredMainCategories = response.data.filter((category) => {
           return category.parent === mainCoursesCategoryId;
           });
@@ -230,18 +228,16 @@ export default function Header() {
   }, []);
 
   const handleLogout = async () => {
-    // Display SweetAlert confirmation
     const result = await Swal.fire({
       title: 'Logout Confirmation',
       text: 'Are you sure you want to log out?',
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
+      confirmButtonColor: '#222',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Yes, log out!',
     });
   
-    // If the user confirms, log out
     if (result.isConfirmed) {
       await signOut({ redirect: false });
       router.push("/login");

@@ -18,7 +18,7 @@ const StyledComponent = styled.div`
   overflow: hidden;
 
   @media screen and (max-width: 768px) {
-    padding: 40px 0;
+    padding: 80px 0;
     margin-bottom: 170px;
   }
 `;
@@ -70,6 +70,8 @@ const FormContainer = styled.form`
   @media screen and (max-width: 768px) {
     padding: 10px 10px;
     padding-bottom: 30px;
+    margin-top: 100px;
+    margin-bottom: 20px;
     width: 250px;
   }
 `;
@@ -172,7 +174,6 @@ export default function LoginPage() {
     ev.preventDefault();
     setLoginInProgress(true);
   
-    // Validation check: Ensure email and password are not empty
     if (!email || !password) {
       toast.error('All fields are required', { position: 'top-center' });
       setLoginInProgress(false);

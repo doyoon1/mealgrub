@@ -15,6 +15,9 @@
     background-position: center;
     background-repeat: no-repeat;
     padding: 60px 0;
+    @media screen and (max-width: 768px) {
+      padding: 80px 0;
+    }
   `;
 
   const Logo = styled.span`
@@ -61,6 +64,8 @@
       padding: 10px 10px;
       padding-bottom: 30px;
       width: 250px;
+      margin-top: 100px;
+      margin-bottom: 20px;
     }
   `;
 

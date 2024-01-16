@@ -357,6 +357,14 @@ export default function index() {
     window.open('/home', '_blank');
   };
 
+  const handleRegisterClick = () => {
+    router.push('/register');
+  };
+
+  const handleRecipesClick = () => {
+    window.open('/recipes', '_blank');
+  };
+
   return (
     <>
       <link
@@ -377,8 +385,8 @@ export default function index() {
       </Hero>
       <Center>
         <CtaContainer>
-          <button>Check Famous Recipes</button>
-          <button>Register | Login</button>
+          <button onClick={handleRecipesClick}>Check Famous Recipes</button>
+          <button onClick={handleRegisterClick}>Register | Login</button>
         </CtaContainer>
       </Center>
       <Adobo>

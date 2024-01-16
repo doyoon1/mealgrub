@@ -122,7 +122,7 @@ export default function NavBar() {
             <LinksWrapper mobileNavActive={mobileNavActive}>
               <NavLink href={"/"}>Home</NavLink>
               <NavLink href="/#about-section">About Us</NavLink>
-              <NavLink href={"/"}>Contact Us</NavLink>
+              <NavLink href={"/contact"}>Contact Us</NavLink>
               <NavLink href={"/login"}>Login</NavLink>
               <NavLink href={"/register"}>Register</NavLink>
             </LinksWrapper>
