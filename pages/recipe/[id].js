@@ -829,7 +829,7 @@ export default function RecipePage({ recipe }) {
     };
 
     const procedureStepsText = recipe.procedure.map((step, index) => (
-        `Step ${index + 1}: ${step}`
+        `${step}`
     ));
 
     const generatePDF = () => {
@@ -902,24 +902,43 @@ export default function RecipePage({ recipe }) {
         doc.line(10, yPos, 200, yPos);
     
         // Initialize the vertical position for procedures
-        yPos += 10;
-
+        yPos += 6;
+    
         // Loop through and add each procedure step to the PDF
         procedureStepsText.forEach((step, index) => {
-            // Split the step into lines, each with a maximum width of 200
-            const lines = doc.splitTextToSize(step, 200);
+        // Set text color to black for step numbers
+        doc.setTextColor(0, 0, 0); // RGB values for black
 
-            // Add each line to the PDF
-            lines.forEach((line, lineIndex) => {
-                doc.text(line, 10, yPos);
-                yPos += 6; // Adjust the vertical spacing as needed
-            });
+        // Add step number (e.g., "STEP 1")
+        const stepNumber = `Step ${index + 1}:`;
+        doc.text(stepNumber, 10, yPos);
+
+        // Reset text color to dark gray for step details
+        doc.setTextColor(64, 64, 64); // RGB values for dark gray
+
+        // Split the step details into lines, each with a maximum width of 190
+        const lines = doc.splitTextToSize(step, 190);
+
+        // Check if adding the lines will exceed the available space on the page
+        const spaceNeeded = (lines.length + 1) * 6; // Adjust the vertical spacing as needed
+        if (yPos + spaceNeeded > 290) { // Adjust the value based on your layout
+            doc.addPage(); // Add a new page
+            yPos = 10; // Reset the vertical position
+        }
+
+        // Add each line of step details to the PDF
+        lines.forEach((line, lineIndex) => {
+            doc.text(line, 10, yPos + 6 * (lineIndex + 1)); // Adjust the x-coordinate as needed
+        });
+
+        // Increment the vertical position for the next step
+        yPos += spaceNeeded;
         });
 
         // Save the PDF with a unique name (e.g., recipe name + timestamp)
         const pdfFileName = `MealGrub-${recipe.title}_Ingredients_${new Date().getTime()}.pdf`;
         doc.save(pdfFileName);
-    };    
+    };
       
     const increaseSets = () => {
         setSets(sets + 1);
