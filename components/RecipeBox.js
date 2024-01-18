@@ -127,16 +127,13 @@ const RecipeBox = ({ _id, title, images, openModal }) => {
     }
   };
 
-  // Fetch average rating initially
   useEffect(() => {
     fetchAverageRating();
   }, [_id]);
 
-  // Set up an interval to fetch the latest average rating every second
   useEffect(() => {
     const intervalId = setInterval(fetchAverageRating, 1000);
 
-    // Clean up the interval when the component is unmounted
     return () => clearInterval(intervalId);
   }, [_id]);
 
@@ -169,10 +166,10 @@ const RecipeBox = ({ _id, title, images, openModal }) => {
         <ButtonWrapper>
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            fill={isRecipeInBag ? "#222" : "none"}
+            fill={isRecipeInBag ? "#FF3040" : "none"}
             viewBox="0 0 24 24"
             strokeWidth={1.5}
-            stroke={isRecipeInBag ? "#222" : "currentColor"}
+            stroke={isRecipeInBag ? "#FF3040" : "currentColor"}
             className="w-6 h-6"
             onClick={handleAddToBagClick}
           >

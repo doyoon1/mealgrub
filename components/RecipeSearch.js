@@ -108,10 +108,6 @@ export default function RecipeSearch({ initialValue }) {
   };
 
   const performSearch = () => {
-    if (searchQuery.trim() === "") {
-      return;
-    }
-
     if (!recentSearches.includes(searchQuery)) {
       const updatedRecentSearches = [searchQuery, ...recentSearches].slice(0, 5);
       setRecentSearches(updatedRecentSearches);

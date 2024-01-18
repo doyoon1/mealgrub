@@ -15,6 +15,22 @@ import { BagContext } from "@/components/BagContext";
 import FilterWindow from "@/components/FilterWindow";
 import { useSession } from "next-auth/react";
 
+const ContentContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const RecipeCount = styled.p`
+  font-size: 1.2rem;
+  margin: 0;
+  color: #777;
+  @media screen and (max-width: 768px) {
+    font-size: 1rem;
+  }
+`;
+
 const Title = styled.h2`
     font-size: 2.5rem;
     margin: 10px 0 20px;
@@ -139,6 +155,7 @@ const FilterButton = styled.button`
     margin: 0;
     font-size: 16px;
     margin-left: 4px;
+    transition: margin-left 0.5s;
   }
 `;
 
@@ -147,6 +164,7 @@ const RecipesPage = ({
   query,
   totalPages,
   currentPage,
+  totalRecipes,
 }) => {
   const [isSideWindowOpen, setIsSideWindowOpen] = useState(false);
   const [isFilterWindowOpen, setIsFilterWindowOpen] = useState(false);
@@ -232,7 +250,10 @@ const RecipesPage = ({
               onSearch={handleSearch}
             />
           )}
-          {query ? <Title>{`Search results for "${query}"`}</Title> : <Title>All recipes</Title>}
+          <ContentContainer>
+            {query ? <Title></Title> : <Title>All recipes</Title>}
+            <RecipeCount>{`${totalRecipes} recipes`}</RecipeCount>
+          </ContentContainer>
           <RecipesGrid recipes={recipes} session={session} />
           <StyledPagination
             current={currentPage}
@@ -327,6 +348,7 @@ export async function getServerSideProps({ query }) {
   
   try {
     recipes = await Recipe.find(filterConditions)
+      .sort({ createdAt: -1 })
       .skip(skip)
       .limit(recipesPerPage)
       .exec();
@@ -346,6 +368,7 @@ export async function getServerSideProps({ query }) {
       query: searchQuery,
       totalPages,
       currentPage: page,
+      totalRecipes,
     },
   };
 }

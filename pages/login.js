@@ -185,23 +185,19 @@ export default function LoginPage() {
     const result = await signIn('credentials', { email, password, callbackUrl: `${currentHost}/home`, redirect: false });
   
     if (result.error) {
-      // Display an error toast
       toast.error('Email or password is incorrect', { position: 'top-center' });
       setLoginInProgress(false);
       return;
     }
   
-    // Fetch the session after a successful login
     const session = await getSession();
     if (session) {
-      // User is logged in, you can redirect or perform other actions
       console.log('User is logged in:', session.user);
     }
   
     setLoginInProgress(false);
   };
   
-
   return (
     <>
       <NavBar />

@@ -25,12 +25,12 @@ async function validateInputFields({ email, password, firstName, lastName, confi
     return 'Password must be 5 characters with at least one uppercase, one lowercase, one number, and one special character.';
   }
 
-  const nameRegex = /^[a-zA-Z]+$/;
+  const nameRegex = /^[a-zA-Z ]+$/;
   if (!nameRegex.test(firstName) || !nameRegex.test(lastName)) {
     return 'Name should not contain numbers or special characters';
   }
 
-  return null; // No validation error
+  return null;
 }
 
 async function isEmailAlreadyRegistered(email) {
@@ -41,11 +41,10 @@ async function isEmailAlreadyRegistered(email) {
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     try {
-      await mongooseConnect(); // Connect to MongoDB
+      await mongooseConnect();
 
       const { email, password, firstName, lastName, confirmPassword } = req.body;
 
-      // Validate input fields
       const validationError = await validateInputFields({
         email,
         password,
@@ -58,15 +57,12 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: validationError });
       }
 
-      // Check if the email already exists
       if (await isEmailAlreadyRegistered(email)) {
         return res.status(400).json({ error: 'Email is already registered' });
       }
 
-      // Hash the password asynchronously
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      // Create user
       const createdUser = await UserAccounts.create({
         email,
         password: hashedPassword,
@@ -74,13 +70,10 @@ export default async function handler(req, res) {
         lastName,
       });
 
-      // Close the MongoDB connection
       await mongoose.connection.close();
 
-      // Send response
       res.status(200).json({ message: 'User created successfully' });
     } catch (error) {
-      // Handle errors
       console.error('Error in registration process:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     }

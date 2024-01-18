@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 const FilterContainer = styled.div`
   margin: 20px 0 10px 0;
+  transition: margin-top 1s;
 `;
 
 const Label = styled.p`
