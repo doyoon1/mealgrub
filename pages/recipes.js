@@ -13,6 +13,7 @@ import { Pagination } from 'antd/dist/antd';
 import { useRouter } from 'next/router';
 import { BagContext } from "@/components/BagContext";
 import FilterWindow from "@/components/FilterWindow";
+import { useSession } from "next-auth/react";
 
 const Title = styled.h2`
     font-size: 2.5rem;
@@ -113,7 +114,7 @@ const BagLength = styled.span`
 const FilterButton = styled.button`
   display: flex;
   font-size: 16px;
-  width: 120px;
+  width: 100px;
   padding: 8px 18px;
   border-radius: 32px;
   cursor: pointer;
@@ -122,25 +123,39 @@ const FilterButton = styled.button`
   gap: 4px;
   align-content: center;
   text-align: center;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   font-family: 'League Spartan', sans-serif;
   border: solid .8px #ccc;
   background-color: #F7F7F7;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   svg {
-    height: 14px;
-    width: 14px;
+    height: 24px;
+    width: 24px;
+    transform: ${(props) => (props.isFilterWindowOpen ? 'rotate(180deg)' : 'rotate(0)')};
+    transition: transform 0.5s;
+  }
+  p{
+    margin: 0;
+    font-size: 16px;
+    margin-left: 4px;
   }
 `;
 
-const RecipesPage = ({ recipes, query, totalPages, currentPage }) => {
+const RecipesPage = ({
+  recipes,
+  query,
+  totalPages,
+  currentPage,
+}) => {
   const [isSideWindowOpen, setIsSideWindowOpen] = useState(false);
   const [isFilterWindowOpen, setIsFilterWindowOpen] = useState(false);
   const [selectedIngredients, setSelectedIngredients] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
+  const [selectedRating, setSelectedRating] = useState(0);
   const router = useRouter();
   const { bagRecipes } = useContext(BagContext);
+  const { data:session } = useSession();
 
   const toggleSideWindow = () => {
     setIsSideWindowOpen(!isSideWindowOpen);
@@ -172,16 +187,21 @@ const RecipesPage = ({ recipes, query, totalPages, currentPage }) => {
     setSelectedCategories(selectedOptions);
   };
 
+  const handleRatingChange = (selectedOption) => {
+    setSelectedRating(selectedOption?.value);
+  };
+
   const handleSearch = () => {
     const ingredientIds = selectedIngredients.map((ingredient) => ingredient.value);
     const categoryIds = selectedCategories.map((category) => category.value);
-  
+
     router.push({
       pathname: '/recipes',
       query: {
         ...router.query,
         ingredients: ingredientIds,
         categories: categoryIds,
+        rating: selectedRating,
         page: 1,
       },
     });
@@ -193,10 +213,10 @@ const RecipesPage = ({ recipes, query, totalPages, currentPage }) => {
         <Header />
         <Center>
           <SearchBar initialValue={query} />
-          <FilterButton onClick={toggleFilterWindow}>
-            Filter 
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
-              <path fillRule="evenodd" d="M2.628 1.601C5.028 1.206 7.49 1 10 1s4.973.206 7.372.601a.75.75 0 0 1 .628.74v2.288a2.25 2.25 0 0 1-.659 1.59l-4.682 4.683a2.25 2.25 0 0 0-.659 1.59v3.037c0 .684-.31 1.33-.844 1.757l-1.937 1.55A.75.75 0 0 1 8 18.25v-5.757a2.25 2.25 0 0 0-.659-1.591L2.659 6.22A2.25 2.25 0 0 1 2 4.629V2.34a.75.75 0 0 1 .628-.74Z" clipRule="evenodd" />
+          <FilterButton onClick={toggleFilterWindow} isFilterWindowOpen={isFilterWindowOpen}>
+            <p>Filter</p>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+              <path fillRule="evenodd" d="M12.53 16.28a.75.75 0 0 1-1.06 0l-7.5-7.5a.75.75 0 0 1 1.06-1.06L12 14.69l6.97-6.97a.75.75 0 1 1 1.06 1.06l-7.5 7.5Z" clipRule="evenodd" />
             </svg>
           </FilterButton>
           {isFilterWindowOpen && (
@@ -205,13 +225,15 @@ const RecipesPage = ({ recipes, query, totalPages, currentPage }) => {
               categories={null}
               selectedIngredients={selectedIngredients}
               selectedCategories={selectedCategories}
+              selectedRating={selectedRating}
               onIngredientChange={handleIngredientChange}
               onCategoryChange={handleCategoryChange}
+              onRatingChange={handleRatingChange}
               onSearch={handleSearch}
             />
           )}
-          {query ? <Title></Title> : <Title>All recipes</Title>}
-          <RecipesGrid recipes={recipes} />
+          {query ? <Title>{`Search results for "${query}"`}</Title> : <Title>All recipes</Title>}
+          <RecipesGrid recipes={recipes} session={session} />
           <StyledPagination
             current={currentPage}
             total={totalPages * 15}
@@ -267,7 +289,7 @@ export async function getServerSideProps({ query }) {
   const recipesPerPage = 15;
   const skip = (page - 1) * recipesPerPage;
 
-  const { query: searchQuery = '', ingredients, categories } = query;
+  const { query: searchQuery = '', ingredients, categories, rating } = query;
 
   let recipes;
   let totalRecipes;
@@ -297,12 +319,18 @@ export async function getServerSideProps({ query }) {
     }
   }
 
+  if (rating && rating !== '0') {
+    const selectedRating = parseInt(rating);
+  
+    filterConditions['averageRating'] = { $gte: selectedRating, $lt: selectedRating + 1 };
+  }
+  
   try {
     recipes = await Recipe.find(filterConditions)
       .skip(skip)
       .limit(recipesPerPage)
       .exec();
-    
+
     totalRecipes = await Recipe.countDocuments(filterConditions);
   } catch (error) {
     console.error('Error fetching recipes:', error);

@@ -673,6 +673,11 @@ const Buttons = styled.div`
 }
 `;
 
+const ServingsInput = styled.input`
+    width: 40px;
+    height: 14px;
+`;
+
 const PreviousIcon = (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
         <path fillRule="evenodd" d="M7.72 12.53a.75.75 0 010-1.06l7.5-7.5a.75.75 0 111.06 1.06L9.31 12l6.97 6.97a.75.75 0 11-1.06 1.06l-7.5-7.5z" clipRule="evenodd" />
@@ -693,6 +698,8 @@ export default function RecipePage({ recipe }) {
     const originalServings = recipe.servings;
     const originalIngredients = recipe.ingredients;
     const [servingsChanged, setServingsChanged] = useState(false);
+    const [editMode, setEditMode] = useState(false);
+    const [editableServings, setEditableServings] = useState(recipe.servings.toString());
     const [activeImageIndex, setActiveImageIndex] = useState(0);
     const formattedCreatedAt = format(new Date(recipe.createdAt), 'MMMM dd, yyyy HH:mm:ss');
     const formattedUpdatedAt = format(new Date(recipe.updatedAt), 'MMMM dd, yyyy');
@@ -774,10 +781,6 @@ export default function RecipePage({ recipe }) {
         setIsSideWindowOpen(!isSideWindowOpen);
       };
     
-      const toggleFilterWindow = () => {
-        setIsFilterWindowOpen(!isFilterWindowOpen);
-      };
-    
       const mainContentStyle = {
         marginRight: isSideWindowOpen ? '400px' : '0',
         transition: 'margin-right 0.5s',
@@ -800,7 +803,6 @@ export default function RecipePage({ recipe }) {
           { withCredentials: true }
         )
         .then((response) => {
-          // Handle success if needed
   
           // Fetch and update the average rating
           axios
@@ -836,19 +838,15 @@ export default function RecipePage({ recipe }) {
         const doc = new jsPDF();
         const today = new Date();
     
-        // Set the font style to Poppins
         doc.setFont('Poppins-Medium', 'normal');
     
-        // Set the title of the PDF (not centered, but bold)
         doc.setFontSize(18);
     
-        // Create a link to the recipe page
         const recipeLink = `${window.location.origin}/recipe/${recipe._id}`;
         const originLink = window.location.origin;
         doc.setTextColor(86, 130, 3);
         doc.textWithLink("MealGrub", 10, 10, { url: originLink });
     
-        // Reset font size
         doc.setFontSize(16);
     
         doc.setFont('Inter-Regular', 'normal');
@@ -858,84 +856,64 @@ export default function RecipePage({ recipe }) {
         doc.text("Servings:", 10, 25);
         doc.setFont('Inter-Bold', 'normal');
     
-        // Set the title as a hyperlink
         doc.textWithLink(recipe.title, 19, 20, { url: recipeLink });
     
         doc.text(`${servings}`, 26, 25);
     
-        // Add Date label
         doc.setFont('Inter-Regular', 'normal');
         doc.text("Date:", 161, 20);
     
         doc.setFont('Inter-Bold', 'normal');
-        // Add the current date
         doc.text(today.toDateString(), 171, 20);
     
         doc.setFontSize(10);
-        doc.setTextColor(64, 64, 64); // RGB values for dark gray
+        doc.setTextColor(64, 64, 64);
     
-        // Set the font family for the ingredients
         doc.setFont('RobotoSlab-Medium', 'bold');
     
-        // Add a title before the separator line
-        doc.text("Ingredients:", 10, 35); // Adjusted y-coordinate here
+        doc.text("Ingredients:", 10, 35); 
     
-        // Add a separator line
-        const separatorY = 38; // Adjusted y-coordinate here
+        const separatorY = 38; 
         doc.line(10, separatorY, 200, separatorY);
     
-        // Initialize the vertical position for ingredients
         let yPos = 44;
     
-        // Loop through and add each ingredient to the PDF
         updatedIngredients.forEach((ingredient) => {
             doc.text(`${ingredient.quantity} ${ingredient.measurement} - ${ingredient.name}`, 10, yPos);
             yPos += 5;
         });
     
-        // Add a title before the separator line for procedures
         yPos += 10;
         doc.text("Procedures:", 10, yPos);
     
-        // Add a separator line for procedures
         yPos += 3;
         doc.line(10, yPos, 200, yPos);
     
-        // Initialize the vertical position for procedures
         yPos += 6;
     
-        // Loop through and add each procedure step to the PDF
         procedureStepsText.forEach((step, index) => {
-        // Set text color to black for step numbers
-        doc.setTextColor(0, 0, 0); // RGB values for black
+        doc.setTextColor(0, 0, 0);
 
-        // Add step number (e.g., "STEP 1")
         const stepNumber = `Step ${index + 1}:`;
         doc.text(stepNumber, 10, yPos);
 
-        // Reset text color to dark gray for step details
-        doc.setTextColor(64, 64, 64); // RGB values for dark gray
+        doc.setTextColor(64, 64, 64);
 
-        // Split the step details into lines, each with a maximum width of 190
         const lines = doc.splitTextToSize(step, 190);
 
-        // Check if adding the lines will exceed the available space on the page
-        const spaceNeeded = (lines.length + 1) * 6; // Adjust the vertical spacing as needed
-        if (yPos + spaceNeeded > 290) { // Adjust the value based on your layout
-            doc.addPage(); // Add a new page
-            yPos = 10; // Reset the vertical position
+        const spaceNeeded = (lines.length + 1) * 6; 
+        if (yPos + spaceNeeded > 290) {
+            doc.addPage();
+            yPos = 10;
         }
 
-        // Add each line of step details to the PDF
         lines.forEach((line, lineIndex) => {
-            doc.text(line, 10, yPos + 6 * (lineIndex + 1)); // Adjust the x-coordinate as needed
+            doc.text(line, 10, yPos + 6 * (lineIndex + 1)); 
         });
 
-        // Increment the vertical position for the next step
         yPos += spaceNeeded;
         });
 
-        // Save the PDF with a unique name (e.g., recipe name + timestamp)
         const pdfFileName = `MealGrub-${recipe.title}_Ingredients_${new Date().getTime()}.pdf`;
         doc.save(pdfFileName);
     };
@@ -945,16 +923,37 @@ export default function RecipePage({ recipe }) {
         const newServings = originalServings * (sets + 1);
         setServings(newServings);
         setServingsChanged(newServings !== originalServings);
-    };
-
-    const decreaseSets = () => {
+      };
+    
+      const decreaseSets = () => {
         if (sets > 1) {
-            setSets(sets - 1);
-            const newServings = originalServings * (sets - 1);
+          setSets(sets - 1);
+          const newServings = originalServings * (sets - 1);
+          setServings(newServings);
+          setServingsChanged(newServings !== originalServings);
+        }
+      };
+    
+      const handleDoubleClick = () => {
+        setEditMode(true);
+      };
+    
+      const handleInputBlur = () => {
+        setEditMode(false);
+        if (editableServings.trim() === '') {
+            const newServings = originalServings * sets;
             setServings(newServings);
             setServingsChanged(newServings !== originalServings);
+        } else {
+            setServings(parseInt(editableServings, 10));
         }
-    };
+        setServingsChanged(editableServings.trim() !== '' && parseInt(editableServings, 10) !== originalServings);
+      };
+    
+      const handleInputChange = (e) => {
+        setEditableServings(e.target.value);
+      };
+    
 
     const servingsRatio = servings / originalServings;
     const updatedIngredients = originalIngredients.map((ingredient, index) => {    
@@ -1076,7 +1075,19 @@ export default function RecipePage({ recipe }) {
                                 <IngredientsContainer>
                                 <Label>Ingredients</Label>
                                 <ServingsControls>
-                                    <ServingsLabel>Servings: {servings}</ServingsLabel>
+                                    <ServingsLabel onDoubleClick={handleDoubleClick}>
+                                    Servings: {editMode ? (
+                                        <ServingsInput
+                                            type="text"
+                                            value={editableServings}
+                                            onChange={handleInputChange}
+                                            onBlur={handleInputBlur}
+                                            autoFocus
+                                        />
+                                    ) : (
+                                        servings
+                                    )}
+                                    </ServingsLabel>                                    
                                     <SetContainer>
                                         <ServingsButton onClick={decreaseSets}>
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">

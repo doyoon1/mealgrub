@@ -42,13 +42,42 @@ const MobileContainer = styled.div`
   }
 `;
 
+const DownloadContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin: 8px 0 0 0;
+  padding-right: 4px;
+`;
+
+const PlannerContainer = styled.div`
+  padding: 4px;
+`;
+
 const Download = styled.button`
   background-color: #CDDDC9;
   border: 1px solid #ccc;
-  margin: 10px 0 0 0;
-  padding: 6px 16px;
+  padding: 2px 12px;
   font-weight: 500;
   cursor: pointer;
+  font-size: 12px;
+`;
+
+const EditableText = styled.span`
+  font-size: 14px;
+  margin-right: 10px;
+  cursor: pointer;
+  user-select: none;
+  display: inline-block;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
+const EditableInput = styled.input`
+  font-size: 14px;
+  margin-right: 10px;
+  width: 300px;
 `;
 
 export default function PlannerPage() {
@@ -56,6 +85,8 @@ export default function PlannerPage() {
   const [recipes, setRecipes] = useState([]);
   const { data: session } = useSession();
   const containerRef = useRef();
+  const [editMode, setEditMode] = useState(false);
+  const [editableText, setEditableText] = useState("double click to add title or notes");
 
   useEffect(() => {
     if (bagRecipes.length === 0) {
@@ -84,20 +115,34 @@ export default function PlannerPage() {
 
   const handleDownloadClick = async () => {
     const container = containerRef.current;
-
+  
     if (container) {
-      // Use html2canvas to convert HTML to an image
-      const canvas = await html2canvas(container);
-
-      // Convert the canvas to a data URL
+      const canvas = await html2canvas(container, {
+        scale: 2,
+      });
+  
       const dataUrl = canvas.toDataURL('image/png');
-
-      // Create a link element and trigger download
+  
       const link = document.createElement('a');
       link.href = dataUrl;
-      link.download = 'Planner-image.png';
+      link.download = 'MealGrub-Planner.png';
       link.click();
     }
+  };
+  
+  const handleDoubleClick = () => {
+    setEditMode(true);
+  };
+
+  const handleInputBlur = () => {
+    if (editableText.trim() === '') {
+      setEditableText("double click to add title or notes");
+    }
+    setEditMode(false);
+  };
+
+  const handleInputChange = (e) => {
+    setEditableText(e.target.value);
   };
 
   return (
@@ -118,10 +163,25 @@ export default function PlannerPage() {
             </RecipeContainer>
           </div>
         )}
-        <Download onClick={handleDownloadClick}>Download Planner</Download>
-        <div ref={containerRef}>
+        <DownloadContainer>
+          <Download onClick={handleDownloadClick}>Download Planner</Download>
+        </DownloadContainer>
+        <PlannerContainer ref={containerRef}>
+          {editMode ? (
+              <EditableInput
+                type="text"
+                value={editableText}
+                onChange={handleInputChange}
+                onBlur={handleInputBlur}
+                autoFocus
+              />
+            ) : (
+              <EditableText onDoubleClick={handleDoubleClick}>
+                {editableText}
+              </EditableText>
+            )}
           <Planner />
-        </div>
+        </PlannerContainer>
         </DesktopContainer>
         <MobileContainer>
           <MessageContainer>

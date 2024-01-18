@@ -75,8 +75,8 @@ const RecentSearchDropdown = styled.div`
   border-radius: 0 0 5px 5px;
   max-height: auto;
   overflow-y: auto;
-  border-bottom-right-radius: 32px;
-  border-bottom-left-radius: 32px;
+  border-bottom-right-radius: 16px;
+  border-bottom-left-radius: 16px;
   z-index: 998;
 `;
 
@@ -140,7 +140,7 @@ export default function RecipeSearch({ initialValue }) {
         <SearchContainer>
           <SearchInput
             type="text"
-            placeholder="Search for recipes..."
+            placeholder="Search for recipes or ingredients..."
             value={searchQuery}
             onChange={handleSearch}
             onFocus={() => setIsInputFocused(true)}

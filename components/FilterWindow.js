@@ -2,6 +2,10 @@ import React, { useEffect, useState } from 'react';
 import Select from 'react-select';
 import styled from 'styled-components';
 
+const FilterContainer = styled.div`
+  margin: 20px 0 10px 0;
+`;
+
 const Label = styled.p`
   font-size: 16px;
   margin-bottom: 0px;
@@ -20,9 +24,20 @@ const SearchButton = styled.button`
   cursor: pointer;
 `;
 
-const FilterWindow = ({ ingredients, categories, selectedIngredients, selectedCategories, onIngredientChange, onCategoryChange, onSearch }) => {
+const FilterWindow = ({
+  ingredients,
+  categories,
+  selectedIngredients,
+  selectedCategories,
+  selectedRating,
+  onIngredientChange,
+  onCategoryChange,
+  onRatingChange,
+  onSearch,
+}) => {
   const [ingredientOptions, setIngredientOptions] = useState([]);
   const [categoryOptions, setCategoryOptions] = useState([]);
+  const [selectedRatingOption, setSelectedRatingOption] = useState(null);
 
   useEffect(() => {
     if (!ingredients || ingredients.length === 0) {
@@ -64,9 +79,8 @@ const FilterWindow = ({ ingredients, categories, selectedIngredients, selectedCa
   }, [ingredients, categories]);
 
   return (
-    <>
+    <FilterContainer>
       <h1>Filter Window</h1>
-      
       <Label>Ingredients</Label>
       <Select
         isMulti
@@ -81,8 +95,24 @@ const FilterWindow = ({ ingredients, categories, selectedIngredients, selectedCa
         value={selectedCategories}
         onChange={onCategoryChange}
       />
+      <Label>Average Rating</Label>
+      <Select
+        options={[
+          { value: 1, label: '1 star' },
+          { value: 2, label: '2 stars' },
+          { value: 3, label: '3 stars' },
+          { value: 4, label: '4 stars' },
+          { value: 5, label: '5 stars' },
+        ]}
+        value={selectedRatingOption}
+        onChange={(selectedOption) => {
+          setSelectedRatingOption(selectedOption);
+          onRatingChange(selectedOption);
+        }}
+        isClearable={true}
+      />
       <SearchButton onClick={onSearch}>Search</SearchButton>
-    </>
+    </FilterContainer>
   );
 };
 

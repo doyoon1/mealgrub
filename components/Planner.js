@@ -5,7 +5,7 @@ import { useDragLayer } from 'react-dnd';
 import { PlannerContext } from './PlannerContext';
 
 const Bg = styled.div`
-  margin-top: 20px;
+  margin-top: 8px;
   border-top: 1px solid #cdddc9;
   border-left: 1px solid #cdddc9;
   border-right: 1px solid #cdddc9;
@@ -90,33 +90,31 @@ const MealLabel = styled.div`
 const RecipeContainer = styled.div`
   display: flex;
   align-items: center;
-  padding: 4px 0px;
+  padding: 4px 0 12px 0px;
   user-select: none;
   width: 180px;
+  position: relative;
 `;
 
-const TitleButtonWrapper = styled.div`
-  display: flex;
-  width: 110px;
-  align-items: center;
-  justify-content: space-between;
-`;
-
-const RecipeImage = styled.img`
-  width: 60px;
-  height: 50px; 
-  object-fit: cover;
-  margin: 0 5px;
+const Bullet = styled.span`
+  width: 10px;
+  margin: 0 2px;
+  position: absolute;
+  top: 3px;
+  font-weight: bold;
+  color: #ff0000;
 `;
 
 const RecipeTitle = styled.div`
-  font-size: 10px;
+  font-size: 12px;
   margin: 0;
+  margin-left: 12px;
   color: #111;
   font-weight: 500;
-  max-width: 160px;
+  max-width: 150px;
   overflow: hidden;
   white-space: normal;
+  cursor: pointer;
 `;
 
 const CloseButton = styled.span`
@@ -127,11 +125,27 @@ const CloseButton = styled.span`
   cursor: pointer;
 `;
 
+const TitleButtonWrapper = styled.div`
+  display: flex;
+  width: 200px;
+  align-items: center;
+  justify-content: space-between;
+
+  ${CloseButton} {
+    display: none;
+  }
+
+  &:hover ${CloseButton} {
+    display: flex;
+  }
+`;
+
 const Planner = () => {
   const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   const MealCategory = ['Breakfast', 'Lunch', 'Dinner', 'Other'];
   const { planner, addRecipeToDay, removeRecipeFromDay } = useContext(PlannerContext);
   const [isClient, setIsClient] = useState(false);
+  const [clickedTitles, setClickedTitles] = useState([]);
 
   useEffect(() => {
     console.log('Planner state:', planner);
@@ -166,19 +180,42 @@ const Planner = () => {
           recipe: item.recipe,
         };
       },
-  });
+    });
 
     const handleRemoveRecipe = (recipeId) => {
       removeRecipeFromDay(day, meal, recipeId);
+    };
+
+    const handleTitleClick = (day, meal, recipeId) => {
+      setClickedTitles((prevTitles) => {
+        const dayMealKey = `${day}-${meal}`;
+        const isClicked = prevTitles[dayMealKey]?.[recipeId];
+        return {
+          ...prevTitles,
+          [dayMealKey]: {
+            ...(prevTitles[dayMealKey] || {}),
+            [recipeId]: !isClicked,
+          },
+        };
+      });
     };
 
     return (
       <div ref={drop} style={{ height: '100%' }}>
         {planner[day]?.[meal]?.map((recipe) => (
           <RecipeContainer key={recipe._id}>
-            <RecipeImage src={recipe.images?.[0]} alt={recipe.title} />
+            {/* <RecipeImage src={recipe.images?.[0]} alt={recipe.title} /> */}
+            <Bullet>•</Bullet>
             <TitleButtonWrapper>
-              <RecipeTitle>{recipe.title}</RecipeTitle>
+              <RecipeTitle
+                onClick={() => handleTitleClick(day, meal, recipe._id)}
+                style={{ 
+                  textDecoration: clickedTitles[`${day}-${meal}`]?.[recipe._id] ? 'line-through' : 'none',
+                  color: clickedTitles[`${day}-${meal}`]?.[recipe._id] ? '#ff0000' : '#111'
+                }}
+              >
+                {recipe.title}
+              </RecipeTitle>
               <CloseButton onClick={() => handleRemoveRecipe(recipe._id)}>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                   <path fillRule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6.97a.75.75 0 10-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 101.06 1.06L12 13.06l1.72 1.72a.75.75 0 101.06-1.06L13.06 12l1.72-1.72a.75.75 0 10-1.06-1.06L12 10.94l-1.72-1.72z" clipRule="evenodd" />

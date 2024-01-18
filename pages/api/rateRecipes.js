@@ -1,4 +1,5 @@
 import { Rating } from '@/models/Rating';
+import { Recipe } from '@/models/Recipe';
 import { mongooseConnect } from '@/lib/mongoose';
 
 mongooseConnect();
@@ -27,12 +28,16 @@ export default async function handler(req, res) {
     // Fetch and calculate the new average rating
     const ratings = await Rating.find({ recipe: recipeId });
     const totalRating = ratings.reduce((sum, rating) => sum + rating.value, 0);
-    const averageRating = totalRating / ratings.length;
+    const newAverageRating = totalRating / ratings.length;
 
-    // Update the recipe's average rating (you might want to store this in the Recipe model)
-    // ...
+    // Update the recipe's average rating
+    const updatedRecipe = await Recipe.findOneAndUpdate(
+      { _id: recipeId },
+      { $set: { averageRating: newAverageRating } },
+      { new: true }
+    );
 
-    return res.status(200).json({ message: 'Recipe rated successfully' });
+    return res.status(200).json({ message: 'Recipe rated successfully', averageRating: updatedRecipe.averageRating });
   } catch (error) {
     console.error('Error rating recipe:', error);
     return res.status(500).json({ message: 'Internal Server Error' });

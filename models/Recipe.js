@@ -14,6 +14,7 @@ const recipeSchema = new Schema({
   videoLink: { type: String },
   nutriValue: [{ type: Object, required: true }],
   featured: { type: Boolean, default: false },
+  averageRating: { type: Number, default: 0 },
 }, {
   timestamps: true,
 });
