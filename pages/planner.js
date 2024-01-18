@@ -4,11 +4,13 @@ import axios from "axios";
 import Header from "@/components/Header";
 import Center from "@/components/Center";
 import styled from "styled-components";
-import WeekCalendar from '@/components/Planner';
+import Planner from '@/components/Planner';
 import React from 'react';
 import { useDrop } from 'react-dnd';
 import DraggableRecipe from '@/components/DraggableRecipe';
 import { useSession } from "next-auth/react";
+import html2canvas from 'html2canvas';
+import { useRef } from "react";
 
 const Title = styled.h1`
   font-family: 'League Spartan', sans-serif;
@@ -40,10 +42,20 @@ const MobileContainer = styled.div`
   }
 `;
 
+const Download = styled.button`
+  background-color: #CDDDC9;
+  border: 1px solid #ccc;
+  margin: 10px 0 0 0;
+  padding: 6px 16px;
+  font-weight: 500;
+  cursor: pointer;
+`;
+
 export default function PlannerPage() {
   const { bagRecipes } = useContext(BagContext);
   const [recipes, setRecipes] = useState([]);
   const { data: session } = useSession();
+  const containerRef = useRef();
 
   useEffect(() => {
     if (bagRecipes.length === 0) {
@@ -70,6 +82,24 @@ export default function PlannerPage() {
     },
   });
 
+  const handleDownloadClick = async () => {
+    const container = containerRef.current;
+
+    if (container) {
+      // Use html2canvas to convert HTML to an image
+      const canvas = await html2canvas(container);
+
+      // Convert the canvas to a data URL
+      const dataUrl = canvas.toDataURL('image/png');
+
+      // Create a link element and trigger download
+      const link = document.createElement('a');
+      link.href = dataUrl;
+      link.download = 'Planner-image.png';
+      link.click();
+    }
+  };
+
   return (
     <>
       <Header />
@@ -88,7 +118,10 @@ export default function PlannerPage() {
             </RecipeContainer>
           </div>
         )}
-        <WeekCalendar />
+        <Download onClick={handleDownloadClick}>Download Planner</Download>
+        <div ref={containerRef}>
+          <Planner />
+        </div>
         </DesktopContainer>
         <MobileContainer>
           <MessageContainer>

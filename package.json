@@ -16,6 +16,7 @@
     "copy-to-clipboard": "^3.3.3",
     "date-fns": "^3.1.0",
     "fraction.js": "^4.3.7",
+    "html2canvas": "^1.4.1",
     "jspdf": "^2.5.1",
     "mongodb": "^6.1.0",
     "mongoose": "^7.6.6",

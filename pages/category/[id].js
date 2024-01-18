@@ -2,7 +2,7 @@ import { mongooseConnect } from '@/lib/mongoose';
 import { Recipe } from '@/models/Recipe';
 import RecipesGrid from '@/components/RecipesGrid';
 import Header from '@/components/Header';
-import Category from '@/models/Category';
+import { Category } from '@/models/Category';
 import Center from '@/components/Center';
 import styled from 'styled-components';
 import ScrollToTopButton from '@/components/ScrollToTop';
@@ -222,10 +222,8 @@ export async function getServerSideProps(context) {
   await mongooseConnect();
   const { id } = context.query;
 
-  // Fetch the category based on the categoryId
-  const category = await Category.findById(id); // Make sure to import and define the Category model
+  const category = await Category.findById(id); 
 
-  // Fetch recipes based on the category ID
   const recipes = await Recipe.find({ category: id }).populate('category').exec();
 
   return {

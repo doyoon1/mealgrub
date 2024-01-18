@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Select from 'react-select';
 import styled from 'styled-components';
-import Center from './Center';
 
 const Label = styled.p`
   font-size: 16px;
@@ -22,8 +21,8 @@ const SearchButton = styled.button`
 `;
 
 const FilterWindow = ({ ingredients, categories, selectedIngredients, selectedCategories, onIngredientChange, onCategoryChange, onSearch }) => {
-  const [ingredientOptions, setIngredientOptions] = useState(ingredients);
-  const [categoryOptions, setCategoryOptions] = useState(categories);
+  const [ingredientOptions, setIngredientOptions] = useState([]);
+  const [categoryOptions, setCategoryOptions] = useState([]);
 
   useEffect(() => {
     if (!ingredients || ingredients.length === 0) {
@@ -31,7 +30,10 @@ const FilterWindow = ({ ingredients, categories, selectedIngredients, selectedCa
         try {
           const response = await fetch('/api/ingredients');
           const data = await response.json();
-          setIngredientOptions(data.ingredients.map((ingredient) => ({ value: ingredient, label: ingredient })));
+          const sortedIngredients = data.ingredients
+            .map((ingredient) => ({ value: ingredient, label: ingredient }))
+            .sort((a, b) => a.label.localeCompare(b.label));
+          setIngredientOptions(sortedIngredients);
         } catch (error) {
           console.error('Error fetching ingredients:', error);
         }
@@ -45,12 +47,18 @@ const FilterWindow = ({ ingredients, categories, selectedIngredients, selectedCa
         try {
           const response = await fetch('/api/categories');
           const data = await response.json();
-          setCategoryOptions(data.map((category) => ({ value: category.name, label: category.name })));
+    
+          const filteredCategories = data
+            .filter((category) => category.parent !== null)
+            .map((category) => ({ value: category.name, label: category.name }))
+            .sort((a, b) => a.label.localeCompare(b.label));
+    
+          setCategoryOptions(filteredCategories);
         } catch (error) {
           console.error('Error fetching categories:', error);
         }
       };
-
+    
       fetchCategories();
     }
   }, [ingredients, categories]);

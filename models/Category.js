@@ -5,6 +5,4 @@ const CategorySchema = new Schema({
   parent: { type: String, },
 });
 
-const Category = models.Category || model('Category', CategorySchema);
-
-export default Category;
+export const Category = models.Category || model('Category', CategorySchema);

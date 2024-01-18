@@ -6,6 +6,8 @@ import Center from '@/components/Center';
 import NavBar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { useSession } from 'next-auth/react';
+import { mongooseConnect } from "@/lib/mongoose";
+import { VisitCount } from '@/models/Visit';
 
 const Hero = styled.div`
   margin-top: 65px;
@@ -349,9 +351,11 @@ const Features = styled.div`
   }
 `;
 
-export default function index() {
+export default function index({ visitCount }) {
   const { data: session } = useSession();
   const router = useRouter();
+
+  console.log(visitCount)
 
   const handleExploreClick = () => {
     window.open('/home', '_blank');
@@ -415,4 +419,18 @@ export default function index() {
       <Footer/>
     </>
   );
+}
+
+export async function getServerSideProps() {
+  await mongooseConnect();
+
+  await VisitCount.updateOne({}, { $inc: { count: 1 } }, { upsert: true });
+
+  const { count } = await VisitCount.findOne() || { count: 0 };
+
+  return {
+    props: {
+      visitCount: count,
+    },
+  };
 }
