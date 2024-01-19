@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import { Recipe } from "@/models/Recipe";
 import { mongooseConnect } from "@/lib/mongoose";
 import NewRecipes from "@/components/NewRecipes";
+import PopularRecipes from "@/components/PopularRecipes";
 import SearchBar from "@/components/RecipeSearch";
 import SideWindow from "@/components/SideWindow";
 import styled from "styled-components";
@@ -57,7 +58,7 @@ const BagLength = styled.span`
   align-items: center;
 `;
 
-export default function HomePage({ session, featuredRecipes, newRecipes }) {
+export default function HomePage({ session, featuredRecipes, newRecipes, popularRecipes }) {
   const [isSideWindowOpen, setIsSideWindowOpen] = useState(false);
   const { bagRecipes } = useContext(BagContext);
   const router = useRouter();
@@ -83,6 +84,7 @@ export default function HomePage({ session, featuredRecipes, newRecipes }) {
         <Center>
           <SearchBar onSearch={handleSearch} />
           <NewRecipes recipes={newRecipes} session={session} />
+          <PopularRecipes popularRecipes={popularRecipes} session={session} />
         </Center>
         <ScrollToTopButton session={session} />
         <Footer session={session} />
@@ -129,6 +131,10 @@ export async function getServerSideProps(context) {
     };
   }
 
+  // Query MongoDB to find the 6 recipes with the highest averageRating
+  const popularRecipes = await Recipe.find({}, null, { sort: { averageRating: -1 }, limit: 6 });
+
+  // Query MongoDB to find the last 6 added recipes (for NewRecipes)
   const newRecipes = await Recipe.find({}, null, { sort: { _id: -1 }, limit: 6 });
 
   return {
@@ -136,6 +142,7 @@ export async function getServerSideProps(context) {
       session,
       featuredRecipes: JSON.parse(JSON.stringify(featuredRecipes)),
       newRecipes: JSON.parse(JSON.stringify(newRecipes)),
+      popularRecipes: JSON.parse(JSON.stringify(popularRecipes)),
     },
   };
 }

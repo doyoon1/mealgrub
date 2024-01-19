@@ -332,6 +332,9 @@ const Info = styled.div`
             height: 14px;
             width: 14px;
         }
+        a{
+            font-size: 10px;
+        }
     }
 
 `;
