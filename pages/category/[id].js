@@ -12,6 +12,7 @@ import { useRouter } from 'next/router';
 import { BagContext } from '@/components/BagContext';
 import SideWindow from '@/components/SideWindow';
 import { useSession } from 'next-auth/react';
+import { useEffect } from 'react';
 
 const IconButtons = styled.div`
   width: 40px;
@@ -134,6 +135,11 @@ export default function CategoryPage({ category, recipes }) {
   const [isSideWindowOpen, setIsSideWindowOpen] = useState(false);
   const {bagRecipes} = useContext(BagContext);
   const { data:session } = useSession();
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [router.query.id]);
+  
 
   const toggleSideWindow = () => {
     setIsSideWindowOpen(!isSideWindowOpen);

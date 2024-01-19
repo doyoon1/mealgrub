@@ -22,6 +22,8 @@ import axios from "axios";
 import { toast } from 'react-hot-toast';
 import { useSession } from "next-auth/react";
 import SideWindow from "@/components/SideWindow";
+import { useSpeechSynthesis } from 'react-speech-kit';
+import { useRef } from "react";
 import "@/components/fonts/Poppins-Light-normal"
 import "@/components/fonts/Poppins-Medium-normal"
 import "@/components/fonts/OpenSans_Condensed-Regular-normal"
@@ -311,7 +313,12 @@ const Info = styled.div`
         margin: 0;
     }
     span{
+        align-items: center;
         font-weight: 500;
+    }
+    svg{
+        height: 18px;
+        width: 18px;
     }
     @media screen and (max-width: 768px) {
         margin-bottom: 10px;
@@ -321,8 +328,21 @@ const Info = styled.div`
         span{
             font-size: 10px;
         }
+        svg{
+            height: 14px;
+            width: 14px;
+        }
     }
 
+`;
+
+const Cooking = styled.div`
+    display: flex;
+    gap: 2px;
+    align-items: center;
+    font-weight: normal;
+    font-style: normal;
+    margin-bottom: 12px;
 `;
 
 const TextLabel = styled.h2`
@@ -361,6 +381,32 @@ const Name = styled.span`
 
 const ProcedureContainer = styled.div`
     margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+`;
+
+const SpeechButton = styled.button`
+    border: 1px solid #ccc;
+    display: flex;
+    gap: 2px;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    padding: 4px 6px;
+    background-color: #fff;
+    position: absolute;
+    top: 0;
+    right: 0;
+    cursor: pointer;
+    svg {
+        height: 18px;
+        width: 18px;
+    }
+    p {
+        margin: 0;
+        font-weight: 500;
+    }
 `;
 
 const ProcedureStep = styled.div`
@@ -627,19 +673,18 @@ const RatingsWrapper = styled.div`
   align-items: center;
   margin-top: 10px;
   @media screen and (max-width: 768px) {
-    flex-direction: column;
-    align-items: flex-start;
     margin-top: 4px;
+    gap: 8px;
   }
 `;
 
 const AverageRating = styled.p`
-  font-size: 16px;
+  font-size: 24px;
   margin: 0 0 0px 8px;
   font-family: 'League Spartan', sans-serif;
   @media screen and (max-width: 768px) {
     margin: 0;
-    font-size: 14px;
+    font-size: 16px;
   }
 `;
 
@@ -712,6 +757,24 @@ export default function RecipePage({ recipe }) {
     const [isSideWindowOpen, setIsSideWindowOpen] = useState(false);
     const [isFilterWindowOpen, setIsFilterWindowOpen] = useState(false);
     const { bagRecipes } = useContext(BagContext);
+    const [starDimension, setStarDimension] = useState("30px");
+    const [starSpacing, setStarSpacing] = useState("4px");
+    const { speak, speaking, supported } = useSpeechSynthesis();
+    const [isSpeaking, setIsSpeaking] = useState(false);
+
+    useEffect(() => {
+        const updateStarDimension = () => {
+          setStarDimension(window.innerWidth < 768 ? "20px" : "30px");
+          setStarSpacing(window.innerWidth < 768 ? "2px" : "4px");
+        };
+    
+        updateStarDimension();
+        window.addEventListener("resize", updateStarDimension);
+    
+        return () => {
+          window.removeEventListener("resize", updateStarDimension);
+        };
+    }, []);
 
     useEffect(() => {
         const fetchComments = async () => {
@@ -826,9 +889,29 @@ export default function RecipePage({ recipe }) {
         setActiveImageIndex((prevIndex) => (prevIndex + 1) % recipe.images.length);
     };
 
-    const procedureStepsText = recipe.procedure.map((step, index) => (
-        `${step}`
-    ));
+    const procedureStepsText = recipe.procedure.map((step, index) => `${step}`);
+
+    const speakProcedure = () => {
+        const textToSpeak = procedureStepsText.map((step, index) => `Step ${index + 1}: ${step}`).join(' ');
+    
+        if (!isSpeaking) {
+            speak({ text: textToSpeak });
+            setIsSpeaking(true);
+        } else {
+            stopSpeaking();
+        }
+    };
+
+    const stopSpeaking = () => {
+        window.speechSynthesis.cancel();
+        setIsSpeaking(false);
+    };
+
+    useEffect(() => {
+        return () => {
+            stopSpeaking(); 
+        };
+    }, []);
 
     const generatePDF = () => {
         const doc = new jsPDF();
@@ -1000,11 +1083,11 @@ export default function RecipePage({ recipe }) {
                                         changeRating={handleRatingChange}
                                         numberOfStars={5}
                                         name="userRating"
-                                        starDimension="20px"
-                                        starSpacing="2px"
+                                        starDimension={starDimension}
+                                        starSpacing={starSpacing}
                                     />
                                     <AverageRating>
-                                    Average {parseFloat(averageRating).toFixed(1)} / 5 out of {totalRatings} ratings
+                                     {parseFloat(averageRating).toFixed(1)} out of {totalRatings} votes
                                     </AverageRating>          
                                 </RatingsWrapper>
                                 <Buttons>
@@ -1030,9 +1113,16 @@ export default function RecipePage({ recipe }) {
                                     </button>
                                 </Buttons>
                                 <Info>
-                                    <p>Cooking time: <span>{recipe?.cookingTime}</span></p>
-                                    <p>By: <span>{recipe?.citation}</span></p>
-                                    <a href={recipe?.citationLink} target="_blank">{recipe?.citationLink}</a>
+                                    {recipe?.cookingTime && (
+                                        <Cooking>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                        </svg>
+                                        <p>{recipe?.cookingTime}</p>
+                                        </Cooking>
+                                    )}
+                                    <p>By: <span>{recipe?.citation || 'N/A'}</span></p>
+                                    <p>Reference: {recipe?.citationLink ? <a href={recipe?.citationLink} target="_blank">{recipe?.citationLink}</a> : 'N/A'}</p>
                                     <p>Posted: <span>{formattedCreatedAt}</span></p>
                                     {recipe.createdAt !== recipe.updatedAt && (
                                         <p>Updated: <span>{formattedUpdatedAt}</span></p>
@@ -1063,6 +1153,23 @@ export default function RecipePage({ recipe }) {
                                 <div>
                                     <ProcedureContainer>
                                         <TextLabel>Procedure</TextLabel>
+                                        <SpeechButton onClick={speakProcedure} disabled={!supported}>
+                                            {isSpeaking ? (
+                                                <>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FF0000" className="w-6 h-6">
+                                                        <path fillRule="evenodd" d="M4.5 7.5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-9a3 3 0 0 1-3-3v-9Z" clipRule="evenodd" />
+                                                    </svg>
+                                                    <p>Stop</p>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#008000" className="w-6 h-6">
+                                                        <path fillRule="evenodd" d="M4.5 5.653c0-1.427 1.529-2.33 2.779-1.643l11.54 6.347c1.295.712 1.295 2.573 0 3.286L7.28 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653Z" clipRule="evenodd" />
+                                                    </svg>
+                                                    <p>Play</p>
+                                                </>
+                                            )}
+                                        </SpeechButton>
                                         {procedureSteps}
                                     </ProcedureContainer>
                                 </div>
