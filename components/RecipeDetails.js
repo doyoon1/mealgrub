@@ -97,9 +97,11 @@ const RightColumn = styled.div`
 
 const ModalButtonsWrapper = styled.div`
   display: flex;
+  width: 100%;
   flex-direction: row;
   margin-top: 20px;
   @media screen and (max-width: 768px) {
+    justify-content: space-between;
     margin-top: 10px;
   }
 `;
@@ -133,7 +135,7 @@ const AddToBag = styled.a`
 `;
 
 const SeeBag = styled.a`
-display: flex;
+  display: flex;
   flex-direction: column;
   font-size: 14px;
   align-items: center;
@@ -146,7 +148,7 @@ display: flex;
   svg {
     width: 18px;
     height: 18px;
-    margin-right: 8px; /* Adjust the margin as needed */
+    margin-right: 8px;
     fill: #F5533D;
   }
 
@@ -157,9 +159,16 @@ display: flex;
   }
 
   @media screen and (max-width: 768px) {
-    font-size: 6px;
+    gap: 4px;
+    font-size: 8px;
     justify-content: space-between;
-    flex-direction: row;
+    flex-direction: column;
+
+    svg {
+      width: 20px;
+      height: 20px;
+      margin-right: 0;
+    }
   }
 `;
 
@@ -182,13 +191,14 @@ const ModalButtons = styled.a`
   }
 
   @media screen and (max-width: 768px) {
-    font-size: 6px;
+    gap: 4px;
+    font-size: 8px;
     justify-content: space-between;
-    flex-direction: row;
+    flex-direction: column;
 
     svg {
-      width: 18px;
-      height: 18px;
+      width: 20px;
+      height: 20px;
       margin-right: 0;
     }  
   }
@@ -233,21 +243,31 @@ const Description = styled.p`
   overflow: hidden;
   text-overflow: ellipsis;
   @media screen and (max-width: 768px) {
-    font-size: 8px;
+    font-size: 10px;
     margin-top: 0px;
   }
 `;
 
 const Servings = styled.p`
+  display: flex;
   font-size: 14px;
   text-align: left;
+  align-items: center;
+  justify-content: center;
+  align-content: center;
   margin: 0;
+  gap: 2px;
   margin-top: 10px;
   font-weight: 500;
   @media screen and (max-width: 768px) {
-    font-size: 8px;
+    font-size: 10px;
     text-align: left;
     margin-top: 4px;
+    margin-bottom: 4px;
+  }
+  svg {
+    height: 14px;
+    width: 14px;
   }
 `;
 
@@ -256,17 +276,20 @@ const RatingsWrapper = styled.div`
   flex-direction: row;
   align-items: center;
   margin-top: 10px;
+  width: 100%;
+
   @media screen and (max-width: 768px) {
-    flex-direction: column;
     align-items: flex-start;
+    gap: 4px;
   }
 `;
 
 const AverageRating = styled.p`
-  font-size: 14px;
+  font-size: 24px;
   margin: 0 0 4px 8px;
+  font-weight: 500;
   @media screen and (max-width: 768px) {
-    font-size: 10px;
+    font-size: 16px;
     margin: 0;
   }
 `;
@@ -288,9 +311,24 @@ function RecipeModal({ isOpen, closeModal, recipe, session }) {
   const [averageRating, setAverageRating] = useState(0);
   const [totalRatings, setTotalRatings] = useState(0);
   const [userRating, setUserRating] = useState(averageRating);
+  const [starDimension, setStarDimension] = useState("30px");
+  const [starSpacing, setStarSpacing] = useState("4px");
 
   useEffect(() => {
-    // Fetch the average and total ratings when the modal is opened
+    const updateStarDimension = () => {
+      setStarDimension(window.innerWidth < 768 ? "20px" : "30px");
+      setStarSpacing(window.innerWidth < 768 ? "2px" : "4px");
+    };
+
+    updateStarDimension();
+    window.addEventListener("resize", updateStarDimension);
+
+    return () => {
+      window.removeEventListener("resize", updateStarDimension);
+    };
+  }, []);
+
+  useEffect(() => {
     if (isOpen) {
       axios
         .get(`/api/getRecipeRatings?recipeId=${recipe._id}`)
@@ -298,7 +336,6 @@ function RecipeModal({ isOpen, closeModal, recipe, session }) {
           const { average, total } = response.data;
           setAverageRating(average);
           setTotalRatings(total);
-          // Update userRating to the averageRating
           setUserRating(average);
         })
         .catch((error) => {
@@ -308,7 +345,6 @@ function RecipeModal({ isOpen, closeModal, recipe, session }) {
   }, [isOpen, recipe?._id]);
 
   const handleRatingChange = (newRating) => {
-    // Check if there is a valid session
     if (!session || !session.user || !session.user._id) {
       console.log("Unauthenticated");
       return;
@@ -316,7 +352,6 @@ function RecipeModal({ isOpen, closeModal, recipe, session }) {
   
     setUserRating(newRating);
   
-    // Save the rating to the database
     axios
       .post(
         "/api/rateRecipes",
@@ -324,9 +359,7 @@ function RecipeModal({ isOpen, closeModal, recipe, session }) {
         { withCredentials: true }
       )
       .then((response) => {
-        // Handle success if needed
   
-        // Fetch and update the average rating
         axios
           .get(`/api/getRecipeRatings?recipeId=${recipe._id}`)
           .then((response) => {
@@ -339,7 +372,6 @@ function RecipeModal({ isOpen, closeModal, recipe, session }) {
           });
       })
       .catch((error) => {
-        // Handle error if needed
         console.error("Error rating recipe:", error);
       });
   };  
@@ -373,10 +405,8 @@ function RecipeModal({ isOpen, closeModal, recipe, session }) {
 
   const handleToggleSaveToBag = () => {
     if (isRecipeInBag) {
-      // If the recipe is in the bag, remove it
       removeRecipe(recipe._id);
     } else {
-      // If the recipe is not in the bag, add it
       addRecipe(recipe._id);
     }
   };
@@ -410,6 +440,12 @@ function RecipeModal({ isOpen, closeModal, recipe, session }) {
           </LeftColumn>
           <RightColumn>
             <Title>{recipe.title}</Title>
+            <Servings>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+              </svg>
+              {recipe?.cookingTime}
+            </Servings>
             <Description>{truncateDescription(recipe.description)}</Description>
             <Servings>Servings: {recipe.servings}</Servings>
             <RatingsWrapper>
@@ -419,11 +455,11 @@ function RecipeModal({ isOpen, closeModal, recipe, session }) {
               changeRating={handleRatingChange}
               numberOfStars={5}
               name="userRating"
-              starDimension="20px"
-              starSpacing="2px"
+              starDimension={starDimension}
+              starSpacing={starSpacing}
             />
               <AverageRating>
-                Average {parseFloat(averageRating).toFixed(1)} / 5 out of {totalRatings} ratings
+                {parseFloat(averageRating).toFixed(1)}
               </AverageRating>          
             </RatingsWrapper>
             <ModalButtonsWrapper>

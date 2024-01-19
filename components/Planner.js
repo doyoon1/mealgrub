@@ -140,7 +140,7 @@ const TitleButtonWrapper = styled.div`
   }
 `;
 
-const Planner = () => {
+const Planner = (session) => {
   const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   const MealCategory = ['Breakfast', 'Lunch', 'Dinner', 'Other'];
   const { planner, addRecipeToDay, removeRecipeFromDay } = useContext(PlannerContext);

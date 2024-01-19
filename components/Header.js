@@ -276,7 +276,7 @@ export default function Header() {
                 <ButtonsWrapper>
                   {status === 'authenticated' && (
                     <>
-                      <NavName>Hello, {session.data.user.firstName}!</NavName>
+                      <NavName>{session.data.user.firstName}</NavName>
                       <Logout onClick={handleLogout}>
                         Logout
                       </Logout>

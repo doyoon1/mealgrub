@@ -77,7 +77,8 @@ const ColumnsWrapper = styled.div`
     }
 
     img {
-      width: 400px;
+      width: auto;
+      max-width: 400px;
       max-height: 270px;
       border-radius: 8px;
       display: block;

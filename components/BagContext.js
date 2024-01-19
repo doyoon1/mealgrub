@@ -10,7 +10,6 @@ export function BagContextProvider({ children }) {
   const [bagRecipes, setBagRecipes] = useState([]);
 
   useEffect(() => {
-    // Fetch the initial bag data when the component mounts
     if (session) {
       axios.get(`/api/bag?userId=${session.user._id}`)
         .then(response => {
@@ -25,7 +24,6 @@ export function BagContextProvider({ children }) {
   function manageRecipe(action, recipeId) {
     if (!session) {
       console.error('User not logged in.');
-      // Display a toast error message here
       toast.error('Please log in to save recipes.', {
         position: 'top-center',
       });
@@ -36,12 +34,10 @@ export function BagContextProvider({ children }) {
   
     axios.post('/api/bag', { userId, recipeId, action }, { withCredentials: true })
       .then(response => {
-        // Handle success if needed
-        // Fetch the updated bag data after successful update
+
         axios.get(`/api/bag?userId=${userId}`)
           .then(response => {
             setBagRecipes(response.data.bag);
-            // Display a toast success message here
             toast.success('Saved successfully!', {
               position: 'top-center',
             });
@@ -51,9 +47,7 @@ export function BagContextProvider({ children }) {
           });
       })
       .catch(error => {
-        // Handle error if needed
         console.error('Error managing recipe in bag:', error);
-        // Display a toast error message here if saving fails
         toast.error('Failed to save recipe.', {
           position: 'top-center',
         });
@@ -67,7 +61,6 @@ export function BagContextProvider({ children }) {
   function removeRecipe(recipeId) {
     if (!session) {
       console.error('User not logged in.');
-      // Display a toast error message here
       toast.error('Please log in to save recipes.', {
         position: 'top-center',
       });
@@ -78,12 +71,10 @@ export function BagContextProvider({ children }) {
   
     axios.post('/api/bag', { userId, recipeId, action: 'remove' }, { withCredentials: true })
       .then(response => {
-        // Handle success if needed
-        // Fetch the updated bag data after successful update
+
         axios.get(`/api/bag?userId=${userId}`)
           .then(response => {
             setBagRecipes(response.data.bag);
-            // Display a toast success message here
             toast.success('Recipe removed successfully!', {
               position: 'top-center',
             });
@@ -93,9 +84,7 @@ export function BagContextProvider({ children }) {
           });
       })
       .catch(error => {
-        // Handle error if needed
         console.error('Error removing recipe from bag:', error);
-        // Display a toast error message here if removal fails
         toast.error('Failed to remove recipe.', {
           position: 'top-center',
         });

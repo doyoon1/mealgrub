@@ -185,6 +185,7 @@ export default function LoginPage() {
     const result = await signIn('credentials', { email, password, callbackUrl: `${currentHost}/home`, redirect: false });
   
     if (result.error) {
+      toast.error('Try reloading the page', { position: 'top-center' });
       toast.error('Email or password is incorrect', { position: 'top-center' });
       setLoginInProgress(false);
       return;

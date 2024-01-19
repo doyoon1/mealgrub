@@ -787,7 +787,6 @@ export default function RecipePage({ recipe }) {
     };
 
     const handleRatingChange = (newRating) => {
-      // Check if there is a valid session
       if (!session || !session.user || !session.user._id) {
         console.log('Unauthenticated');
         return;
@@ -795,7 +794,6 @@ export default function RecipePage({ recipe }) {
   
       setUserRating(newRating);
   
-      // Save the rating to the database
       axios
         .post(
           '/api/rateRecipes',
@@ -804,7 +802,6 @@ export default function RecipePage({ recipe }) {
         )
         .then((response) => {
   
-          // Fetch and update the average rating
           axios
             .get(`/api/getRecipeRatings?recipeId=${recipe._id}`)
             .then((response) => {
@@ -817,7 +814,6 @@ export default function RecipePage({ recipe }) {
             });
         })
         .catch((error) => {
-          // Handle error if needed
           console.error('Error rating recipe:', error);
         });
     };
@@ -1075,7 +1071,7 @@ export default function RecipePage({ recipe }) {
                                 <IngredientsContainer>
                                 <Label>Ingredients</Label>
                                 <ServingsControls>
-                                    <ServingsLabel onDoubleClick={handleDoubleClick}>
+                                    <ServingsLabel onClick={handleDoubleClick}>
                                     Servings: {editMode ? (
                                         <ServingsInput
                                             type="text"
@@ -1142,15 +1138,25 @@ export default function RecipePage({ recipe }) {
                             </Feedback>
                             <CommentBox>
                                 <h2>Comments</h2>
-                                {comments
-                                    .filter(comment => comment.approved)
-                                    .map((comment) => (
-                                        <Comment key={comment._id}>
-                                            <FullName>{comment?.user?.firstName || comment?.user?.lastName ? `${comment.user.firstName} ${comment.user.lastName}` : 'Deleted User'}</FullName>
-                                            <PostedDate>Posted on {format(new Date(comment.createdAt), 'MMMM dd, yyyy')}</PostedDate>
-                                            <span>{comment.text}</span>
-                                        </Comment>
-                                    ))}
+                                {comments.filter((comment) => comment.approved).length === 0 ? (
+                                    <p>No comments yet. Be the first to comment!</p>
+                                ) : (
+                                    comments
+                                        .filter((comment) => comment.approved)
+                                        .map((comment) => (
+                                            <Comment key={comment._id}>
+                                                <FullName>
+                                                    {comment?.user?.firstName || comment?.user?.lastName
+                                                        ? `${comment.user.firstName} ${comment.user.lastName}`
+                                                        : 'Deleted User'}
+                                                </FullName>
+                                                <PostedDate>
+                                                    Posted on {format(new Date(comment.createdAt), 'MMMM dd, yyyy')}
+                                                </PostedDate>
+                                                <span>{comment.text}</span>
+                                            </Comment>
+                                        ))
+                                )}
                             </CommentBox>
                         </FeedbackContainer>
                     </div>
