@@ -10,7 +10,7 @@ import { mongooseConnect } from "@/lib/mongoose";
 import { VisitCount } from '@/models/Visit';
 
 const Hero = styled.div`
-  margin-top: 65px;
+  margin-top: 3.8rem;
   background-image: url("/pagebackground.png");
   background-size: cover;
   background-repeat: no-repeat;

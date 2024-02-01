@@ -1,106 +1,123 @@
-import { useRouter } from "next/router";
-import Link from "next/link";
-import styled from "styled-components";
-import Center from "./Center";
-import { useState, useEffect } from "react";
-import HamburgerIcon from "./icons/Hamburger";
-import CloseIcon from "./icons/CloseIcon";
-import axios from "axios";
-import CoursesDropdown from "./Dropdown";
-import { signOut, useSession } from "next-auth/react";
+import React, { useEffect, useState, useRef, useContext } from 'react';
+import styled from 'styled-components';
+import Center from './Center';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
+import { useSession, signOut } from 'next-auth/react';
+import HamburgerIcon from './icons/Hamburger';
+import CloseIcon from './icons/CloseIcon';
+import { BagContext } from './BagContext';
 import Swal from 'sweetalert2';
 
-const StyledHeader = styled.header`
-    background-color: #111;
-`;
-
-const Logo = styled.div`
-    user-select: none;
-    color: #fff;
-    text-decoration: none;
-    position: relative;
-    z-index: 3;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    align-content: center;
-    img{
-      height: 64px;
-      width: 64px;
-    }
+const StyledNav = styled.div`
+  background-color: #111;
+  z-index: 1000;
+  width: 100%;
 `;
 
 const Wrapper = styled.div`
-    display: flex;
-    justify-content: space-between;
-    padding: 20px 0;
-    align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0;
 `;
 
-const StyledNav = styled.nav`
-    ${props => props.mobileNavActive ? `
-        display: block;
-    ` : `
-        display: none;
-    `}
-    background-color: #111;
-    align-items: center;
-    gap: 8px;
-    position: fixed;
-    top: 50px;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 20px 20px 20px;
-    z-index: 1000;
-    @media screen and (min-width: 768px) {
-      display: flex;
-      position: static;
-      padding: 0;
-    }
+const LogoWrapper = styled.div`
+  user-select: none;
+  color: #fff;
+  text-decoration: none;
+  position: relative;
+  z-index: 3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  img {
+    height: 64px;
+    width: 64px;
+  }
 `;
 
 const NavLink = styled(Link)`
-    background-color: #transparent;
-    display: block;
-    color: #aaa;
-    text-decoration: none;
-    &:hover {
-      color: #fff;
-      transition: all .4s;
-    }
-    ${(props) => props.isActive && `color: #fff;`}
-    padding: 5px 0;
-    @media screen and (min-width: 768px) {
-        padding: 0;
-    }
+  display: flex;
+  position: relative;
+  align-items: center;
+  color: #aaa;
+  text-decoration: none;
+  cursor: pointer;
+
+  svg {
+    height: 18px;
+    width: 18px;
+    transition: transform 0.3s ease;
+  }
+
+  &:hover {
+    color: #fff;
+    transition: all 0.4s;
+  }
+
+  @media screen and (max-width: 768px) {
+    display: ${props => (props.hideOnMobile ? 'none' : 'flex')};
+  }
 `;
 
-const NavName = styled.p`
-    display: block;
-    color: #aaa;
-    text-decoration: none;
-    &:hover {
-      color: #fff;
-      transition: all .4s;
-      cursor: default;
-    }
+const SubMenu = styled.div`
+  display: none;
+  position: static;
+  top: 100%;
+  left: 0;
+  z-index: 1001;
+  width: 100%;
+  @media screen and (min-width: 768px) {
+    position: absolute;
+    background-color: #080808;
+    width: 200px;
+  }
+`;
+
+const MenuItem = styled.div`
+  position: relative;
+`;
+
+const SubNavLink = styled(NavLink)`
+  padding: 2px 10px;
+  border: 1px solid #ccc;
+  margin: 10px 0;
+
+  @media screen and (min-width: 768px) {
+    padding: 10px 14px;
+    border: none;
     margin: 0;
-    @media screen and (min-width: 768px) {
-        margin: 0;
+    &:hover{
+      background-color: #222;
     }
+  }
 `;
 
-const DropdownWrapper = styled.div`
-    background-color: #transparent;
+const LinksWrapper = styled.div`
+  ${props => props.mobileNavActive ? `
+    display: block;
+  ` : `
+    display: none;
+  `}
+  justify-content: center;
+  gap: 30px;
+  align-items: center;
+  gap: 20px;
+  position: fixed;
+  top: 50px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20px 20px 20px;
+  background-color: #111;
+  z-index: 1000;
+  @media screen and (min-width: 768px) {
     display: flex;
-    gap: 8px;
-    flex-direction: column;
-
-    @media screen and (min-width: 768px) {
-      padding: 0;
-      flex-direction: row;
-    }
+    position: static;
+    padding: 0;
+  }
 `;
 
 const NavButton = styled.button`
@@ -112,120 +129,161 @@ const NavButton = styled.button`
   color: white;
   position: relative;
   z-index: 3;
+  display: block;
+
   @media screen and (min-width: 768px) {
     display: none;
   }
 
-  svg {
-    transition: transform 0.3s ease;
+  .icon-container {
+    transition: transform 0.5s ease;
+    transform: ${props => (props.mobileNavActive ? 'rotate(90deg)' : 'rotate(0deg)')};
   }
 
   &:hover {
-    svg {
+    .icon-container {
+      transition: transform 0.5s ease;
     }
   }
 `;
 
-
-const ButtonsWrapper = styled.div`
-    display: flex;
-    gap: 8px;
-    background-color: #transparent;
-    flex-direction: column;
-    margin-top: 8px;
-
-    @media screen and (min-width: 768px) {
-      flex-direction: row;
-      margin-top: 0;
-    }
-`;
-
-const Logout = styled.div`
-  color: #aaa;
-  text-decoration: none;
-  background-color: #transparent;
-  border: none;
+const CategoriesDiv = styled.div`
+  color: ${props => (props.active ? '#fff' : '#aaa')};
+  display: flex;
+  align-items: center;
   cursor: pointer;
-  font-family: 'Poppins', sans-serif;
-  font-size: 16px;
-  padding: 0;
-  
+
+  svg {
+    height: 18px;
+    width: 18px;
+    transition: transform 0.3s ease;
+    transform: ${props => (props.active ? 'rotate(180deg)' : 'rotate(0deg)')};
+  }
+
   &:hover {
     color: #fff;
-    transition: all .4s;
-  }
-
-  @media screen and (min-width: 768px) {
-    padding: 0;
+    transition: all 0.4s;
   }
 `;
 
+const NameDiv = styled.div`
+  color: ${props => (props.active ? '#fff' : '#aaa')};
+  display: flex;
+  align-items: center;
+  cursor: pointer;
 
-export default function Header() {
-    const router = useRouter();
-    const [mainCourses, setMainCourses] = useState([])
-    const [coursesCategories, setCoursesCategories] = useState([]);
-    const [dietaryCategories, setDietaryCategories] = useState([]);
-    const [mobileNavActive, setMobileNavActive] = useState(false);
-    const session = useSession();
-    const status = session.status;
+  &:hover {
+    color: #fff;
+    transition: all 0.4s;
+  }
+`;
 
-    useEffect(() => {
-    const fetchDietaryCategories = async () => {
-        try {
-        const response = await axios.get("/api/categories");
-        const dietaryParentId = "653e62ebec031412f6316fb6";
+const UserSubMenu = styled.div`
+  display: none;
+  position: static;
+  top: 100%;
+  left: 0;
+  z-index: 1001;
+  width: 100%;
 
-        const filteredDietaryCategories = response.data.filter((category) => {
-            return category.parent === dietaryParentId;
-        });
+  @media screen and (min-width: 768px) {
+    position: absolute;
+    background-color: #080808;
+    width: 200px;
+  }
+`;
 
-        setDietaryCategories(filteredDietaryCategories);
-        } catch (error) {
-        console.error('Error fetching dietary categories:', error);
-        }
+const ProfileLink = styled.div`
+  padding: 2px 10px;
+  border: 1px solid #ccc;
+  margin: 10px 0;
+  color: #ccc;
+  cursor: pointer;
+
+  @media screen and (min-width: 768px) {
+    padding: 10px 14px;
+    border: none;
+    margin: 0;
+    &:hover{
+      color: #fff;
+      background-color: #222;
+      transition: all 0.4s;
+    }
+  }
+`;
+
+const BagLength = styled.span`
+  font-size: 10px;
+  position: absolute;
+  height: 4px;
+  width: 4px;
+  top: 0;
+  right: -8px;
+  background-color: #FF0126;
+  color: #fff;
+  padding: 5px;
+  border-radius: 50%;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const NavBar = () => {
+  const router = useRouter();
+  const session = useSession();
+  const status = session.status;
+  const [mobileNavActive, setMobileNavActive] = useState(false);
+  const [categoriesActive, setCategoriesActive] = useState(false);
+  const [userSubMenuActive, setUserSubMenuActive] = useState(false);
+  const categoriesRef = useRef(null);
+  const userSubMenuRef = useRef(null);
+  const { bagRecipes } = useContext(BagContext);
+
+  const handleNameClick = () => {
+    setUserSubMenuActive((prev) => !prev);
+  };
+
+  useEffect(() => {
+    if (session && router.pathname === '/login') {
+      router.push('/home');
+    }
+
+    const handleClickOutside = (event) => {
+      if (userSubMenuRef.current && !userSubMenuRef.current.contains(event.target)) {
+        setUserSubMenuActive(false);
+      }
     };
 
-    fetchDietaryCategories();
-    }, []);
+    document.addEventListener('mousedown', handleClickOutside);
 
-    useEffect(() => {
-        const fetchCategories = async () => {
-        try {
-            const response = await axios.get("/api/categories");
-            const coursesCategoryId = "653e5850ec031412f6316f77";
-            
-            const filteredCategories = response.data.filter((category) => {
-            return category.parent === coursesCategoryId;
-            });
+    // Cleanup event listener on component unmount
+    return () => {
+      document.removeEventListener('click', handleOutsideClick);
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [session, router]);
 
-            setCoursesCategories(filteredCategories);
-        } catch (error) {
-            console.error('Error fetching categories:', error);
-        }
-        };
+  useEffect(() => {
+    // Add event listener for clicks outside CategoriesDiv
+    document.addEventListener('click', handleOutsideClick);
 
-        fetchCategories();
-    }, []);
+    // Cleanup event listener on CategoriesDiv ref change
+    return () => {
+      document.removeEventListener('click', handleOutsideClick);
+    };
+  }, [categoriesActive]);
 
-    useEffect(() => {
-      const mainCourses = async () => {
-      try {
-          const response = await axios.get("/api/categories");
-          const mainCoursesCategoryId = "6581153849e5aa1bbc820d9b";
-          
-          const filteredMainCategories = response.data.filter((category) => {
-          return category.parent === mainCoursesCategoryId;
-          });
+  const handleCategoriesClick = () => {
+    setCategoriesActive((prev) => !prev);
+  };
 
-          setMainCourses(filteredMainCategories);
-      } catch (error) {
-          console.error('Error fetching categories:', error);
-      }
-      };
-
-      mainCourses();
-  }, []);
+  const handleOutsideClick = (event) => {
+    if (categoriesRef.current && !categoriesRef.current.contains(event.target)) {
+      // Clicked outside CategoriesDiv, close submenu
+      setCategoriesActive(false);
+    }
+  };
 
   const handleLogout = async () => {
     const result = await Swal.fire({
@@ -244,62 +302,78 @@ export default function Header() {
     }
   };
 
-    return (
-      <div>
-        <StyledHeader>
-          <Center>
-            <Wrapper>
-              <Logo>
-                MealGrub
-              </Logo>
-              <StyledNav mobileNavActive={mobileNavActive}>
-                <NavLink href={"/home"} isActive={router.pathname === "/home"}>
-                  Home
-                </NavLink>
-                <NavLink
-                  href={"/recipes"}
-                  isActive={router.pathname === "/recipes"}
+  return (
+    <div>
+      <StyledNav>
+        <Center>
+          <Wrapper>
+            <LogoWrapper>
+              MealGrub
+            </LogoWrapper>
+            <LinksWrapper mobileNavActive={mobileNavActive}>
+              <NavLink href={"/home"}>Home</NavLink>
+              <MenuItem>
+                <CategoriesDiv
+                  ref={categoriesRef}
+                  active={categoriesActive}
+                  onClick={handleCategoriesClick}
                 >
-                  Recipes
-                </NavLink>
-                <NavLink
-                  href={"/planner"}
-                  isActive={router.pathname === "/planner"}
-                >
-                  Planner
-                </NavLink>
-                <DropdownWrapper>
-                  <CoursesDropdown categories={mainCourses} label="Main Courses" />
-                  <CoursesDropdown categories={coursesCategories} label="Courses" />
-                  <CoursesDropdown categories={dietaryCategories} label="Dietary" />
-                </DropdownWrapper>
-                <ButtonsWrapper>
-                  {status === 'authenticated' && (
-                    <>
-                      <NavName>{session.data.user.firstName}</NavName>
-                      <Logout onClick={handleLogout}>
-                        Logout
-                      </Logout>
-                    </>
-                  )}
-                  {status === 'unauthenticated' && (
-                    <>
-                      <NavLink href={"/login"} isActive={router.pathname === "/login"}>
-                        Login
-                      </NavLink>
-                      <NavLink href={"/register"} isActive={router.pathname === "/register"}>
-                        Register
-                      </NavLink>
-                    </>
-                  )}
-                </ButtonsWrapper>
-              </StyledNav>
-              <NavButton onClick={() => setMobileNavActive((prev) => !prev)}>
+                  Categories
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+                    <path fillRule="evenodd" d="M12.53 16.28a.75.75 0 0 1-1.06 0l-7.5-7.5a.75.75 0 0 1 1.06-1.06L12 14.69l6.97-6.97a.75.75 0 1 1 1.06 1.06l-7.5 7.5Z" clipRule="evenodd" />
+                  </svg>
+                </CategoriesDiv>
+                <SubMenu style={{ display: categoriesActive ? 'block' : 'none' }}>
+                  <SubNavLink href={"/category/653ced2310e14fa280c0d0a1"}>Breakfast</SubNavLink>
+                  <SubNavLink href={"/category/653ced1810e14fa280c0d09e"}>Lunch</SubNavLink>
+                  <SubNavLink href={"/category/651d4f6cfccc5b3b416d1454"}>Dinner</SubNavLink>
+                  <SubNavLink href={"/categories"}>All Categories</SubNavLink>
+                </SubMenu>
+              </MenuItem>
+              <NavLink href={"/recipes"}>All Recipes</NavLink>
+              <NavLink href={"/planner"}>Planner</NavLink>
+              <NavLink href={"/bag"} hideOnMobile>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+                  <path fillRule="evenodd" d="M7.5 6v.75H5.513c-.96 0-1.764.724-1.865 1.679l-1.263 12A1.875 1.875 0 0 0 4.25 22.5h15.5a1.875 1.875 0 0 0 1.865-2.071l-1.263-12a1.875 1.875 0 0 0-1.865-1.679H16.5V6a4.5 4.5 0 1 0-9 0ZM12 3a3 3 0 0 0-3 3v.75h6V6a3 3 0 0 0-3-3Zm-3 8.25a3 3 0 1 0 6 0v-.75a.75.75 0 0 1 1.5 0v.75a4.5 4.5 0 1 1-9 0v-.75a.75.75 0 0 1 1.5 0v.75Z" clipRule="evenodd" />
+                </svg>
+                {bagRecipes?.length > 0 && (
+                  <BagLength>
+                    {bagRecipes?.length}
+                  </BagLength>
+                )}
+              </NavLink>
+                {status === 'authenticated' && (
+                  <>
+                    <MenuItem ref={userSubMenuRef}>
+                      <NameDiv
+                        active={userSubMenuActive}
+                        onClick={handleNameClick}
+                      >
+                        {session.data.user.firstName} {session.data.user.lastName}
+                      </NameDiv>
+                      <UserSubMenu style={{ display: userSubMenuActive ? 'block' : 'none' }}>
+                        <ProfileLink onClick={handleLogout}>Logout</ProfileLink>
+                      </UserSubMenu>
+                    </MenuItem>
+                  </>
+                )}
+                {status === 'unauthenticated' && (
+                  <>
+                    <NavLink href={"/login"}>Login</NavLink>
+                    <NavLink href={"/register"}>Register</NavLink>
+                  </>
+                )}
+            </LinksWrapper>
+            <NavButton mobileNavActive={mobileNavActive} onClick={() => setMobileNavActive((prev) => !prev)}>
+              <div className="icon-container">
                 {mobileNavActive ? <CloseIcon /> : <HamburgerIcon />}
-              </NavButton>
-            </Wrapper>
-          </Center>
-        </StyledHeader>
-      </div>
-    );
-  }
+              </div>
+            </NavButton>
+          </Wrapper>
+        </Center>
+      </StyledNav>
+    </div>
+  );
+}
+
+export default NavBar;

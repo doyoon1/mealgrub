@@ -5,10 +5,8 @@ mongooseConnect();
 
 export default async function handler(req, res) {
   if (req.method === 'GET') {
-    // Get user's bag
     return getUserBag(req, res);
   } else if (req.method === 'POST') {
-    // Update, add, or remove recipe
     return manageUserBag(req, res);
   } else {
     return res.status(405).json({ message: 'Method Not Allowed' });

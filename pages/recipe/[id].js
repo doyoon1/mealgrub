@@ -82,7 +82,6 @@ const Title = styled.h1`
     font-size: 3em;
     font-weight: bold;
     margin: 18px 0;
-    font-family: 'League Spartan', sans-serif;
     @media screen and (max-width: 768px) {
         font-size: 2em;
         margin: 12px 0;
@@ -94,7 +93,6 @@ const Description = styled.p`
     font-weight: normal;
     text-align: justify;
     margin: 12px 0;
-    font-family: 'League Spartan', sans-serif;
     @media screen and (max-width: 768px) {
         font-size: 0.8em;
     }
@@ -162,7 +160,6 @@ const Feedback = styled.div`
     h2 {
         font-size: 24px;
         margin-bottom: 0;
-        font-family: 'League Spartan', sans-serif;
     }
     p {
         margin-top: 4px;
@@ -176,7 +173,6 @@ const Feedback = styled.div`
         border-radius: 4px;
         text-align: center;
         align-items: center;
-        font-family: 'League Spartan', sans-serif;
         font-size: 16px;
         cursor: pointer;
     }
@@ -202,7 +198,6 @@ const CommentBox = styled.div`
     display: flex;
     flex-direction: column;
     h2 {
-      font-family: 'League Spartan', sans-serif;
       margin-bottom: 0;
     }
     p {
@@ -211,7 +206,6 @@ const CommentBox = styled.div`
     }
     @media screen and (max-width: 768px) {
         h2 {
-            font-family: 'League Spartan', sans-serif;
             font-size: 16px;
             margin: 30px 0 0 0;
         }
@@ -238,7 +232,6 @@ const FullName = styled.h4`
   font-size: 20px;
   font-weight: 500;
   margin-bottom: 0;
-  font-family: 'League Spartan', sans-serif;
   @media screen and (max-width: 768px) {
     font-size: 16px;
   }
@@ -289,7 +282,6 @@ const Label = styled.h2`
     font-size: 1.8rem;
     font-weight: normal;
     margin: 0;
-    font-family: 'League Spartan', sans-serif;
     @media screen and (max-width: 768px) {
         font-size: 1.6rem;
     }
@@ -428,7 +420,6 @@ const Step = styled.p`
     font-weight: bold;
     flex: 1;
     font-style: italic;
-    font-family: 'League Spartan', sans-serif;
     @media screen and (max-width: 768px) {
         margin-bottom: 4px;
     }
@@ -438,7 +429,6 @@ const Steps = styled.p`
     font-weight: normal;
     text-align: justify;
     flex: 8;
-    font-family: 'League Spartan', sans-serif;
     @media screen and (max-width: 768px) {
         margin: 0px;
     }
@@ -684,7 +674,6 @@ const RatingsWrapper = styled.div`
 const AverageRating = styled.p`
   font-size: 24px;
   margin: 0 0 0px 8px;
-  font-family: 'League Spartan', sans-serif;
   @media screen and (max-width: 768px) {
     margin: 0;
     font-size: 16px;
@@ -693,7 +682,6 @@ const AverageRating = styled.p`
 
 const Buttons = styled.div`
   margin: 0;
-  font-family: 'League Spartan', sans-serif;
   display: flex;
   justify-content: flex-end;
   gap: 4px;
@@ -703,7 +691,6 @@ const Buttons = styled.div`
     align-items: center;
     gap: 4px;
     width: 80px;
-    font-family: 'League Spartan', sans-serif;
     font-size: 14px;
     padding: 4px;
     border-radius: 4px;
@@ -746,7 +733,6 @@ export default function RecipePage({ recipe }) {
     const originalServings = recipe.servings;
     const originalIngredients = recipe.ingredients;
     const [servingsChanged, setServingsChanged] = useState(false);
-    const [editMode, setEditMode] = useState(false);
     const [editableServings, setEditableServings] = useState(recipe.servings.toString());
     const [activeImageIndex, setActiveImageIndex] = useState(0);
     const formattedCreatedAt = format(new Date(recipe.createdAt), 'MMMM dd, yyyy HH:mm:ss');
@@ -758,7 +744,6 @@ export default function RecipePage({ recipe }) {
     const [comments, setComments] = useState([]);
     const [newCommentText, setNewCommentText] = useState('');
     const [isSideWindowOpen, setIsSideWindowOpen] = useState(false);
-    const [isFilterWindowOpen, setIsFilterWindowOpen] = useState(false);
     const { bagRecipes } = useContext(BagContext);
     const [starDimension, setStarDimension] = useState("30px");
     const [starSpacing, setStarSpacing] = useState("4px");
@@ -1015,27 +1000,6 @@ export default function RecipePage({ recipe }) {
           setServingsChanged(newServings !== originalServings);
         }
       };
-    
-      const handleDoubleClick = () => {
-        setEditMode(true);
-      };
-    
-      const handleInputBlur = () => {
-        setEditMode(false);
-        if (editableServings.trim() === '') {
-            const newServings = originalServings * sets;
-            setServings(newServings);
-            setServingsChanged(newServings !== originalServings);
-        } else {
-            setServings(parseInt(editableServings, 10));
-        }
-        setServingsChanged(editableServings.trim() !== '' && parseInt(editableServings, 10) !== originalServings);
-      };
-    
-      const handleInputChange = (e) => {
-        setEditableServings(e.target.value);
-      };
-    
 
     const servingsRatio = servings / originalServings;
     const updatedIngredients = originalIngredients.map((ingredient, index) => {    
@@ -1181,18 +1145,8 @@ export default function RecipePage({ recipe }) {
                                 <IngredientsContainer>
                                 <Label>Ingredients</Label>
                                 <ServingsControls>
-                                    <ServingsLabel onClick={handleDoubleClick}>
-                                    Servings: {editMode ? (
-                                        <ServingsInput
-                                            type="text"
-                                            value={editableServings}
-                                            onChange={handleInputChange}
-                                            onBlur={handleInputBlur}
-                                            autoFocus
-                                        />
-                                    ) : (
-                                        servings
-                                    )}
+                                    <ServingsLabel>
+                                    Servings: {servings}
                                     </ServingsLabel>                                    
                                     <SetContainer>
                                         <ServingsButton onClick={decreaseSets}>

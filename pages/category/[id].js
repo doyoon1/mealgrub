@@ -228,9 +228,11 @@ export async function getServerSideProps(context) {
   await mongooseConnect();
   const { id } = context.query;
 
-  const category = await Category.findById(id); 
+  const category = await Category.findById(id);
 
-  const recipes = await Recipe.find({ category: id }).populate('category').exec();
+  const recipes = await Recipe.find({ category: id, hidden: { $ne: true } })
+    .populate('category')
+    .exec();
 
   return {
     props: {

@@ -51,10 +51,8 @@ async function handlePost({ recipeId, value }, res) {
     try {
       const result = await db.collection('ratings').insertOne(newRating);
 
-      // Respond with the inserted rating on success
       res.status(201).json({ success: true, rating: newRating });
     } catch (error) {
-      // If an error occurs during insertion, handle it
       console.error('Error inserting rating into ratings collection:', error);
       res.status(500).json({ error: 'Failed to insert rating' });
     }

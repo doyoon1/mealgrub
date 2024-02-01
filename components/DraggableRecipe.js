@@ -15,6 +15,11 @@ const DraggableRecipeContainer = styled.div`
   width: auto;
   padding: 4px 8px;
   margin-bottom: 10px;
+  @media screen and (max-width: 960px) {
+    padding: 2px 6px;
+    max-width: 250px;
+    margin-bottom: 2px;
+  }
 `;
 
 const RecipeImage = styled.img`
@@ -23,6 +28,10 @@ const RecipeImage = styled.img`
   object-fit: cover;
   border-radius: 50%;
   margin-right: 10px;
+  @media screen and (max-width: 960px) {
+    width: 12px;
+    height: 12px;
+  }
 `;
 
 const RemoveIcon = styled.svg`
@@ -38,6 +47,9 @@ const RecipeTitle = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  @media screen and (max-width: 960px) {
+    font-size: 8px;
+  }
 `;
 
 const RemoveButton = styled.button`
@@ -53,6 +65,10 @@ const RemoveButtonIcon = styled.svg`
   fill: #e53935;
   width: 16px;
   height: 16px;
+  @media screen and (max-width: 960px) {
+    width: 8px;
+    height: 8px;
+  }
 `;
 
 
