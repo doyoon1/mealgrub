@@ -99,11 +99,11 @@ const FilterWindow = ({
       <Label>Average Rating</Label>
       <Select
         options={[
-          { value: 1, label: '⭐' },
-          { value: 2, label: '⭐⭐' },
-          { value: 3, label: '⭐⭐⭐' },
-          { value: 4, label: '⭐⭐⭐⭐' },
-          { value: 5, label: '⭐⭐⭐⭐⭐' },
+          { value: 5, label: '⭐⭐⭐⭐⭐ Outstanding' },
+          { value: 4, label: '⭐⭐⭐⭐ Very Good' },
+          { value: 3, label: '⭐⭐⭐ Average' },
+          { value: 2, label: '⭐⭐ Below Average' },
+          { value: 1, label: '⭐ Poor' },
         ]}
         value={selectedRatingOption}
         onChange={(selectedOption) => {

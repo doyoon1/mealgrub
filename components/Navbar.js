@@ -88,17 +88,17 @@ const NavButton = styled.button`
     display: none;
   }
 
-  svg {
-    transition: transform 0.3s ease;
+  .icon-container {
+    transition: transform 0.5s ease;
+    transform: ${props => (props.mobileNavActive ? 'rotate(90deg)' : 'rotate(0deg)')};
   }
 
   &:hover {
-    svg {
+    .icon-container {
+      transition: transform 0.5s ease;
     }
   }
 `;
-
-
 
 export default function NavBar() {
   const router = useRouter();
@@ -126,8 +126,10 @@ export default function NavBar() {
               <NavLink href={"/login"}>Login</NavLink>
               <NavLink href={"/register"}>Register</NavLink>
             </LinksWrapper>
-            <NavButton onClick={() => setMobileNavActive((prev) => !prev)}>
-              {mobileNavActive ? <CloseIcon /> : <HamburgerIcon />}
+            <NavButton mobileNavActive={mobileNavActive} onClick={() => setMobileNavActive((prev) => !prev)}>
+              <div className="icon-container">
+                {mobileNavActive ? <CloseIcon /> : <HamburgerIcon />}
+              </div>
             </NavButton>
           </Wrapper>
         </Center>

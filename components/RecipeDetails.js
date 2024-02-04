@@ -504,10 +504,10 @@ function RecipeModal({ isOpen, closeModal, recipe, session }) {
         <>
           <ModalBackground onClick={(e) => e.stopPropagation()}>
             <PlannerModal 
-            isOpen={plannerModalIsOpen} 
-            closeModal={togglePlannerModal}
-            recipe={recipe}
-            session={session} />
+              isOpen={plannerModalIsOpen} 
+              closeModal={togglePlannerModal}
+              recipe={recipe}
+              session={session} />
           </ModalBackground>
         </>
       )}

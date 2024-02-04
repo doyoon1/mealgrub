@@ -35,7 +35,7 @@ export default function NewRecipes({ recipes, session }) {
   return (
     <div>
       <TitleContainer>
-        <Title>New Arrivals</Title>
+        <Title>Latest Dishes</Title>
         <SeeMore href="/recipes" passHref>
           <SeeMoreLink>See All</SeeMoreLink>
         </SeeMore>
