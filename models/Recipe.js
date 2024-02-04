@@ -15,6 +15,7 @@ const recipeSchema = new Schema({
   nutriValue: [{ type: Object, required: true }],
   featured: { type: Boolean, default: false },
   averageRating: { type: Number, default: 0 },
+  hidden: { type: Boolean, default: false },
 }, {
   timestamps: true,
 });

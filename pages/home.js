@@ -14,6 +14,7 @@ import { BagContext } from "@/components/BagContext";
 import { getSession, useSession } from "next-auth/react";
 import Center from "@/components/Center";
 import { useRouter } from "next/router";
+import Try from "@/components/Header";
 
 const IconButtons = styled.div`
   width: 40px;
@@ -79,7 +80,7 @@ export default function HomePage({ session, featuredRecipes, newRecipes, popular
   return (
     <div>
       <div style={mainContentStyle}>
-        <Header />
+        <Try />
         <Featured recipes={featuredRecipes} session={session} />
         <Center>
           <SearchBar onSearch={handleSearch} />
@@ -119,11 +120,9 @@ export default function HomePage({ session, featuredRecipes, newRecipes, popular
 export async function getServerSideProps(context) {
   await mongooseConnect();
 
-  // Fetch the session
   const session = await getSession(context);
 
-  // Query MongoDB to find featured recipes with "featured" field set to true
-  const featuredRecipes = await Recipe.find({ featured: true });
+  const featuredRecipes = await Recipe.find({ featured: true, hidden: { $ne: true } });
 
   if (!featuredRecipes || featuredRecipes.length === 0) {
     return {
@@ -131,11 +130,8 @@ export async function getServerSideProps(context) {
     };
   }
 
-  // Query MongoDB to find the 6 recipes with the highest averageRating
-  const popularRecipes = await Recipe.find({}, null, { sort: { averageRating: -1 }, limit: 6 });
-
-  // Query MongoDB to find the last 6 added recipes (for NewRecipes)
-  const newRecipes = await Recipe.find({}, null, { sort: { _id: -1 }, limit: 6 });
+  const popularRecipes = await Recipe.find({ hidden: { $ne: true } }, null, { sort: { averageRating: -1 }, limit: 6 });
+  const newRecipes = await Recipe.find({ hidden: { $ne: true } }, null, { sort: { _id: -1 }, limit: 6 });
 
   return {
     props: {

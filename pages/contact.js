@@ -5,6 +5,7 @@ import Center from '@/components/Center';
 import Footer from '@/components/Footer';
 import emailjs from '@emailjs/browser';
 import toast from 'react-hot-toast';
+import axios from 'axios';
 
 const StyledComponent = styled.div`
   position: relative;
@@ -140,14 +141,21 @@ export default function ContactPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
-
+  
   const sendEmail = async (e) => {
     e.preventDefault();
 
     try {
+      await axios.post('/api/contact', { name, email, message });
+    } catch (error) {
+      console.error('Error saving contact form data:', error);
+      toast.error('Error saving contact form data. Please try again later.', { position: 'top-center' });
+      return;
+    }
+
+    try {
       await emailjs.sendForm('service_9pnvyr3', 'template_53u9azm', e.target, 'W5Tb309rp33UNHtAL');
       toast.success('Message sent successfully!', { position: 'top-center' });
-      // Clear the form
       setName('');
       setEmail('');
       setMessage('');

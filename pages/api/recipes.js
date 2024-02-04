@@ -6,7 +6,6 @@ mongooseConnect();
 export default async function handler(req, res) {
   if (req.method === 'GET') {
     if (req.query.id) {
-      // Fetch a single recipe by ID
       try {
         const recipe = await Recipe.findById(req.query.id);
         if (!recipe) {
@@ -18,7 +17,6 @@ export default async function handler(req, res) {
         return res.status(500).json({ message: 'Internal Server Error' });
       }
     } else {
-      // Fetch all recipes
       try {
         const recipes = await Recipe.find();
         return res.status(200).json(recipes);

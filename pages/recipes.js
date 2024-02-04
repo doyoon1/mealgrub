@@ -316,6 +316,7 @@ export async function getServerSideProps({ query }) {
   let totalRecipes;
 
   const filterConditions = {};
+  filterConditions['hidden'] = { $ne: true };
 
   if (searchQuery) {
     filterConditions.$or = [

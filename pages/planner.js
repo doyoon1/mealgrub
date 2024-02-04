@@ -1,21 +1,26 @@
-import { useContext, useEffect, useState } from "react";
-import { BagContext } from "@/components/BagContext";
-import axios from "axios";
-import Header from "@/components/Header";
-import Center from "@/components/Center";
-import styled from "styled-components";
+import { useContext, useEffect, useState, useRef } from 'react';
+import { BagContext } from '@/components/BagContext';
+import axios from 'axios';
+import Header from '@/components/Header';
+import Center from '@/components/Center';
+import styled from 'styled-components';
 import Planner from '@/components/Planner';
 import React from 'react';
 import { useDrop } from 'react-dnd';
 import DraggableRecipe from '@/components/DraggableRecipe';
-import { useSession } from "next-auth/react";
+import { useSession } from 'next-auth/react';
 import html2canvas from 'html2canvas';
-import { useRef } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from 'next/router';
+import { jsPDF } from 'jspdf';
+import "@/components/fonts/Poppins-Light-normal"
+import "@/components/fonts/Poppins-Medium-normal"
 
 const Title = styled.h1`
   font-family: 'League Spartan', sans-serif;
   margin: 50px 0;
+  @media screen and (max-width: 960px) {
+    margin: 20px 0;
+  }
 `;
 
 const RecipeContainer = styled.div`
@@ -23,6 +28,9 @@ const RecipeContainer = styled.div`
   flex-wrap: wrap;
   gap: 10px;
   user-select: none;
+  @media screen and (max-width: 960px) {
+    gap: 6px;
+  }
 `;
 
 const MessageContainer = styled.div`
@@ -33,13 +41,11 @@ const MessageContainer = styled.div`
 
 const DesktopContainer = styled.div`
   @media screen and (max-width: 960px) {
-    display: none;
   }
 `;
 
 const MobileContainer = styled.div`
   @media screen and (min-width: 961px) {
-    display: none;
   }
 `;
 
@@ -55,12 +61,16 @@ const PlannerContainer = styled.div`
 `;
 
 const Download = styled.button`
-  background-color: #CDDDC9;
+  background-color: #cdddc9;
   border: 1px solid #ccc;
   padding: 2px 12px;
   font-weight: 500;
   cursor: pointer;
   font-size: 12px;
+  @media screen and (max-width: 960px) {
+    font-size: 8px;
+      padding: 2px 12px;
+  }
 `;
 
 const EditableText = styled.span`
@@ -73,12 +83,18 @@ const EditableText = styled.span`
   &:hover {
     text-decoration: underline;
   }
+  @media screen and (max-width: 960px) {
+    font-size: 8px;
+  }
 `;
 
 const EditableInput = styled.input`
   font-size: 14px;
   margin-right: 10px;
   width: 400px;
+  @media screen and (max-width: 960px) {
+    font-size: 8px;
+  }
 `;
 
 const EditableTitle = styled.h2`
@@ -91,12 +107,19 @@ const EditableTitle = styled.h2`
   &:hover {
     text-decoration: underline;
   }
+
+  @media screen and (max-width: 960px) {
+    font-size: 8px;
+  }
 `;
 
 const TitleInput = styled.input`
   font-size: 14px;
   margin-right: 10px;
   width: 300px;
+  @media screen and (max-width: 960px) {
+    font-size: 8px;
+  }
 `;
 
 const EditableContainer = styled.div`
@@ -110,9 +133,9 @@ export default function PlannerPage() {
   const { data: session } = useSession();
   const containerRef = useRef();
   const [editModeDate, setEditModeDate] = useState(false);
-  const [editableTextDate, setEditableTextDate] = useState("");
+  const [editableTextDate, setEditableTextDate] = useState('');
   const [editModeNotes, setEditModeNotes] = useState(false);
-  const [editableTextNotes, setEditableTextNotes] = useState("");
+  const [editableTextNotes, setEditableTextNotes] = useState('');
   const router = useRouter();
 
   useEffect(() => {
@@ -151,11 +174,11 @@ export default function PlannerPage() {
 
     axios
       .post('/api/bagRecipes', { ids: bagRecipes })
-      .then(response => {
+      .then((response) => {
         console.log('Fetched recipes:', response.data);
         setRecipes(response.data);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error('Error fetching recipes:', error);
         setRecipes([]);
       });
@@ -174,18 +197,37 @@ export default function PlannerPage() {
   
     if (container) {
       const canvas = await html2canvas(container, {
-        scale: 2,
+        scale: 6,
       });
   
-      const dataUrl = canvas.toDataURL('image/png');
+      const aspectRatio = canvas.width / canvas.height;
+      const pdfWidth = 210;
+      const pdfHeight = pdfWidth / aspectRatio;
   
-      const link = document.createElement('a');
-      link.href = dataUrl;
-      link.download = 'MealGrub-Planner.png';
-      link.click();
+      const topMargin = 10; 
+  
+      const margin = 10;
+  
+      const pdf = new jsPDF('p', 'mm', 'a4');
+  
+      pdf.setFont('Poppins-Medium', 'normal');
+  
+      const originLink = window.location.origin;
+      pdf.setTextColor(86, 130, 3);
+      pdf.textWithLink("MealGrub", 10, 10, { url: originLink });
+  
+      pdf.addImage(
+        canvas.toDataURL('image/png', 1.0),
+        'PNG',
+        margin,
+        margin + topMargin,
+        pdfWidth - margin * 2,
+        pdfHeight - margin * 2
+      );
+      pdf.save('MealGrub-Planner.pdf');
     }
-  };
-  
+  };  
+
   const handleSingleClickDate = () => {
     setEditModeDate(true);
   };
@@ -241,7 +283,7 @@ export default function PlannerPage() {
   };
 
   const handleLoginLinkClick = () => {
-    router.push("/login");
+    router.push('/login');
   };
 
   return (
@@ -256,9 +298,7 @@ export default function PlannerPage() {
                 <RecipeContainer ref={drop}>
                   {bagRecipes?.map((recipeId) => {
                     const recipe = recipes.find((r) => r._id === recipeId);
-                    return recipe ? (
-                      <DraggableRecipe key={recipe._id} recipe={recipe} session={session} />
-                    ) : null;
+                    return recipe ? <DraggableRecipe key={recipe._id} recipe={recipe} session={session} /> : null;
                   })}
                 </RecipeContainer>
               </div>
@@ -269,7 +309,7 @@ export default function PlannerPage() {
             <PlannerContainer ref={containerRef}>
               <EditableContainer>
                 <EditableTitle onClick={handleSingleClickNotes}>
-                  {editableTextNotes || "Click to add title..."}
+                  {editableTextNotes || 'Click to add title...'}
                 </EditableTitle>
                 {editModeNotes ? (
                   <TitleInput
@@ -282,9 +322,7 @@ export default function PlannerPage() {
                 ) : (
                   <></>
                 )}
-                <EditableText onClick={handleSingleClickDate}>
-                  {editableTextDate}
-                </EditableText>
+                <EditableText onClick={handleSingleClickDate}>{editableTextDate}</EditableText>
                 {editModeDate ? (
                   <EditableInput
                     type="text"
@@ -302,16 +340,13 @@ export default function PlannerPage() {
           </DesktopContainer>
         ) : (
           <MessageContainer>
-            Please login to use the planner.{" "}
-            <span style={{ textDecoration: "underline", cursor: "pointer", color: "#0070f3" }} onClick={handleLoginLinkClick}>
+            Please login to use the planner.{' '}
+            <span style={{ textDecoration: 'underline', cursor: 'pointer', color: '#0070f3' }} onClick={handleLoginLinkClick}>
               Click here.
             </span>
           </MessageContainer>
         )}
-          <MobileContainer>
-            <MessageContainer>Planner is only available for desktop.</MessageContainer>
-          </MobileContainer>
       </Center>
     </>
   );
-};
+}
